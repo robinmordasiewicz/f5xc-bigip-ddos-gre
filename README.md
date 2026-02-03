@@ -4,8 +4,9 @@
 
 This guide explains how to:
 
-- Configure **GRE tunnels** and **BGP peering** from a BIG-IP device
-  (acting as customer premises equipment, CPE).
+- Configure **GRE tunnels** and **BGP peering** from a BIG-IP HA pair
+  (acting as customer premises equipment, CPE), with independent
+  tunnels per unit.
 - Connect to the **F5 Distributed Cloud DDoS Mitigation** scrubbing
   centers in **routed mode** (L3/L4).
 
@@ -94,8 +95,8 @@ This guide assumes **Route Domain 0** (the default).
 > [K000147949][k000147949] for examples using proper documentation
 > addresses.
 >
-> For redundancy, create **at least 2 tunnels** to different
-> geo-located F5 scrubbing centers per location.
+> For redundancy, create **2 tunnels per BIG-IP unit** to different
+> geo-located F5 scrubbing centers (4 tunnels total for an HA pair).
 
 ```mermaid
 flowchart LR
@@ -107,26 +108,31 @@ flowchart LR
     end
 
     subgraph DC["Customer Data Center"]
-        BIGIP["BIG-IP HA Pair\n203.0.113.10"]
+        BIGIPA["BIG-IP-A\n203.0.113.10"]
+        BIGIPB["BIG-IP-B\n203.0.113.11"]
         NET["Protected Network\n192.0.2.0/24\n2001:db8:abcd::/48"]
     end
 
     INET --> SJC
     INET --> IAD
-    SJC -- "GRE tunnel 1\ninner 10.10.10.1/30" --> BIGIP
-    IAD -- "GRE tunnel 2\ninner 10.10.10.5/30" --> BIGIP
-    BIGIP --> NET
+    SJC -- "GRE SJC-1" --> BIGIPA
+    IAD -- "GRE IAD-1" --> BIGIPA
+    SJC -- "GRE SJC-2" --> BIGIPB
+    IAD -- "GRE IAD-2" --> BIGIPB
+    BIGIPA --> NET
+    BIGIPB --> NET
 
     style INET fill:#616161,color:#fff
     style SJC fill:#4a90d9,color:#fff
     style IAD fill:#4a90d9,color:#fff
-    style BIGIP fill:#2e7d32,color:#fff
+    style BIGIPA fill:#2e7d32,color:#fff
+    style BIGIPB fill:#f57f17,color:#fff
     style NET fill:#1565c0,color:#fff
 ```
 
 ### F5 Distributed Cloud (scrubbing center) sample
 
-**Tunnel 1 — SJC (San Jose):**
+**Tunnel SJC-1 — SJC to BIG-IP-A:**
 
 - GRE outer IPs (for tunnel endpoints):
   - IPv4 SRC: `198.51.100.10/24`
@@ -137,7 +143,18 @@ flowchart LR
   - IPv4: `10.10.10.1/30`
   - IPv6: `fd70:b364:3528:2b51::1/64`
 
-**Tunnel 2 — IAD (Ashburn):**
+**Tunnel SJC-2 — SJC to BIG-IP-B:**
+
+- GRE outer IPs (for tunnel endpoints):
+  - IPv4 SRC: `198.51.100.10/24`
+  - IPv4 DST: `203.0.113.11/24`
+  - IPv6 SRC: `2001:db8:100::1/64`
+  - IPv6 DST: `2001:db8:200::2/64`
+- GRE inner IPs (for BGP session):
+  - IPv4: `10.10.10.9/30`
+  - IPv6: `fd70:b364:3528:2b53::1/64`
+
+**Tunnel IAD-1 — IAD to BIG-IP-A:**
 
 - GRE outer IPs (for tunnel endpoints):
   - IPv4 SRC: `198.51.100.20/24`
@@ -147,6 +164,17 @@ flowchart LR
 - GRE inner IPs (for BGP session):
   - IPv4: `10.10.10.5/30`
   - IPv6: `fd70:b364:3528:2b52::1/64`
+
+**Tunnel IAD-2 — IAD to BIG-IP-B:**
+
+- GRE outer IPs (for tunnel endpoints):
+  - IPv4 SRC: `198.51.100.20/24`
+  - IPv4 DST: `203.0.113.11/24`
+  - IPv6 SRC: `2001:db8:100::2/64`
+  - IPv6 DST: `2001:db8:200::2/64`
+- GRE inner IPs (for BGP session):
+  - IPv4: `10.10.10.13/30`
+  - IPv6: `fd70:b364:3528:2b54::1/64`
 
 > **Inner (transit) IPs** such as `10.10.10.0/30` use RFC 1918
 > addresses. This is correct because they are encapsulated inside the
@@ -161,19 +189,38 @@ flowchart LR
 
 ### Customer / BIG-IP sample
 
-- GRE outer IPs (on BIG-IP):
+**BIG-IP-A** (outer IP `203.0.113.10` / `2001:db8:200::1`):
+
+- GRE outer IPs:
   - IPv4 SRC: `203.0.113.10/24`
   - IPv4 DST (SJC): `198.51.100.10/24`
   - IPv4 DST (IAD): `198.51.100.20/24`
   - IPv6 SRC: `2001:db8:200::1/64`
   - IPv6 DST (SJC): `2001:db8:100::1/64`
   - IPv6 DST (IAD): `2001:db8:100::2/64`
-- GRE inner IPs — Tunnel 1 (SJC):
+- GRE inner IPs — Tunnel SJC-1:
   - IPv4: `10.10.10.2/30`
   - IPv6: `fd70:b364:3528:2b51::2/64`
-- GRE inner IPs — Tunnel 2 (IAD):
+- GRE inner IPs — Tunnel IAD-1:
   - IPv4: `10.10.10.6/30`
   - IPv6: `fd70:b364:3528:2b52::2/64`
+
+**BIG-IP-B** (outer IP `203.0.113.11` / `2001:db8:200::2`):
+
+- GRE outer IPs:
+  - IPv4 SRC: `203.0.113.11/24`
+  - IPv4 DST (SJC): `198.51.100.10/24`
+  - IPv4 DST (IAD): `198.51.100.20/24`
+  - IPv6 SRC: `2001:db8:200::2/64`
+  - IPv6 DST (SJC): `2001:db8:100::1/64`
+  - IPv6 DST (IAD): `2001:db8:100::2/64`
+- GRE inner IPs — Tunnel SJC-2:
+  - IPv4: `10.10.10.10/30`
+  - IPv6: `fd70:b364:3528:2b53::2/64`
+- GRE inner IPs — Tunnel IAD-2:
+  - IPv4: `10.10.10.14/30`
+  - IPv6: `fd70:b364:3528:2b54::2/64`
+
 - Protected prefixes (advertised to F5 Distributed Cloud):
   - IPv4: `192.0.2.0/24`
   - IPv6: `2001:db8:abcd::/48`
@@ -185,21 +232,32 @@ flowchart LR
         IAD["IAD\n198.51.100.20\n2001:db8:100::2"]
     end
 
-    subgraph BIGIP["BIG-IP\n203.0.113.10\n2001:db8:200::1"]
-        T1_INNER["Tunnel 1 Inner\n10.10.10.2\nfd70:..2b51::2"]
-        T2_INNER["Tunnel 2 Inner\n10.10.10.6\nfd70:..2b52::2"]
+    subgraph BIGIPA["BIG-IP-A\n203.0.113.10\n2001:db8:200::1"]
+        T1_INNER["SJC-1 Inner\n10.10.10.2\nfd70:..2b51::2"]
+        T2_INNER["IAD-1 Inner\n10.10.10.6\nfd70:..2b52::2"]
     end
 
-    SJC == "GRE outer\n198.51.100.10 <-> 203.0.113.10" ==> T1_INNER
-    IAD == "GRE outer\n198.51.100.20 <-> 203.0.113.10" ==> T2_INNER
+    subgraph BIGIPB["BIG-IP-B\n203.0.113.11\n2001:db8:200::2"]
+        T3_INNER["SJC-2 Inner\n10.10.10.10\nfd70:..2b53::2"]
+        T4_INNER["IAD-2 Inner\n10.10.10.14\nfd70:..2b54::2"]
+    end
 
-    SJC -. "BGP inner tcp/179\n10.10.10.1 <-> 10.10.10.2\nASN: F5_XC <-> Customer" .-> T1_INNER
-    IAD -. "BGP inner tcp/179\n10.10.10.5 <-> 10.10.10.6\nASN: F5_XC <-> Customer" .-> T2_INNER
+    SJC == "GRE SJC-1\n198.51.100.10 to 203.0.113.10" ==> T1_INNER
+    IAD == "GRE IAD-1\n198.51.100.20 to 203.0.113.10" ==> T2_INNER
+    SJC == "GRE SJC-2\n198.51.100.10 to 203.0.113.11" ==> T3_INNER
+    IAD == "GRE IAD-2\n198.51.100.20 to 203.0.113.11" ==> T4_INNER
+
+    SJC -. "BGP tcp/179\n10.10.10.1 to 10.10.10.2" .-> T1_INNER
+    IAD -. "BGP tcp/179\n10.10.10.5 to 10.10.10.6" .-> T2_INNER
+    SJC -. "BGP tcp/179\n10.10.10.9 to 10.10.10.10" .-> T3_INNER
+    IAD -. "BGP tcp/179\n10.10.10.13 to 10.10.10.14" .-> T4_INNER
 
     style SJC fill:#4a90d9,color:#fff
     style IAD fill:#4a90d9,color:#fff
     style T1_INNER fill:#2e7d32,color:#fff
     style T2_INNER fill:#2e7d32,color:#fff
+    style T3_INNER fill:#f57f17,color:#fff
+    style T4_INNER fill:#f57f17,color:#fff
 ```
 
 ## F5 Distributed Cloud configuration (Console)
@@ -305,30 +363,50 @@ root@(bigip)(cfg-sync Standalone)(Active)(/Common)(tmos)#
 
 ### Configure outer self IPs (GRE endpoints)
 
-These are the IPs on BIG-IP used as **GRE tunnel endpoints**,
-typically on the external VLAN:
+These are the IPs on each BIG-IP unit used as **GRE tunnel
+endpoints**, typically on the external VLAN. Each unit has its own
+non-floating outer self IP (`traffic-group-local-only`):
+
+**BIG-IP-A:**
 
 ```shell
-create net self xc-ddos-v4-self \
+create net self xc-ddos-v4-self-a \
   vlan external \
   traffic-group traffic-group-local-only \
   allow-service add { icmp:any gre:any } \
   address 203.0.113.10/24
 
-create net self xc-ddos-v6-self \
+create net self xc-ddos-v6-self-a \
   vlan external \
   traffic-group traffic-group-local-only \
   allow-service add { icmp:any gre:any } \
   address 2001:db8:200::1/64
 ```
 
+**BIG-IP-B:**
+
+```shell
+create net self xc-ddos-v4-self-b \
+  vlan external \
+  traffic-group traffic-group-local-only \
+  allow-service add { icmp:any gre:any } \
+  address 203.0.113.11/24
+
+create net self xc-ddos-v6-self-b \
+  vlan external \
+  traffic-group traffic-group-local-only \
+  allow-service add { icmp:any gre:any } \
+  address 2001:db8:200::2/64
+```
+
 ### Create GRE tunnels
 
-Each tunnel points from BIG-IP to an F5 Distributed Cloud scrubbing
-center endpoint. Create **at least two tunnels** to different
-geo-located scrubbing centers for redundancy:
+Each tunnel points from a BIG-IP unit to an F5 Distributed Cloud
+scrubbing center endpoint. Create **two tunnels per unit** (one to
+each geo-located scrubbing center) for a total of **four logical
+tunnels** across the HA pair:
 
-**Tunnel 1 — SJC (San Jose):**
+**Tunnel SJC-1 — BIG-IP-A to SJC (San Jose):**
 
 ```shell
 create net tunnels tunnel xc-ddos-sjc1-v4 \
@@ -342,7 +420,7 @@ create net tunnels tunnel xc-ddos-sjc1-v6 \
   remote-address 2001:db8:100::1
 ```
 
-**Tunnel 2 — IAD (Ashburn):**
+**Tunnel IAD-1 — BIG-IP-A to IAD (Ashburn):**
 
 ```shell
 create net tunnels tunnel xc-ddos-iad1-v4 \
@@ -352,6 +430,34 @@ create net tunnels tunnel xc-ddos-iad1-v4 \
 
 create net tunnels tunnel xc-ddos-iad1-v6 \
   local-address 2001:db8:200::1 \
+  profile gre \
+  remote-address 2001:db8:100::2
+```
+
+**Tunnel SJC-2 — BIG-IP-B to SJC (San Jose):**
+
+```shell
+create net tunnels tunnel xc-ddos-sjc2-v4 \
+  local-address 203.0.113.11 \
+  profile gre \
+  remote-address 198.51.100.10
+
+create net tunnels tunnel xc-ddos-sjc2-v6 \
+  local-address 2001:db8:200::2 \
+  profile gre \
+  remote-address 2001:db8:100::1
+```
+
+**Tunnel IAD-2 — BIG-IP-B to IAD (Ashburn):**
+
+```shell
+create net tunnels tunnel xc-ddos-iad2-v4 \
+  local-address 203.0.113.11 \
+  profile gre \
+  remote-address 198.51.100.20
+
+create net tunnels tunnel xc-ddos-iad2-v6 \
+  local-address 2001:db8:200::2 \
   profile gre \
   remote-address 2001:db8:100::2
 ```
@@ -369,8 +475,12 @@ encapsulation overhead:
 ```shell
 modify net tunnels tunnel xc-ddos-sjc1-v4 mtu 1476
 modify net tunnels tunnel xc-ddos-sjc1-v6 mtu 1456
+modify net tunnels tunnel xc-ddos-sjc2-v4 mtu 1476
+modify net tunnels tunnel xc-ddos-sjc2-v6 mtu 1456
 modify net tunnels tunnel xc-ddos-iad1-v4 mtu 1476
 modify net tunnels tunnel xc-ddos-iad1-v6 mtu 1456
+modify net tunnels tunnel xc-ddos-iad2-v4 mtu 1476
+modify net tunnels tunnel xc-ddos-iad2-v6 mtu 1456
 ```
 
 > The values above assume a 1500-byte path MTU on the outer network.
@@ -391,11 +501,16 @@ only the expected F5 scrubbing-center source IPs:
 ip access-list extended ALLOW-XC-GRE
   permit gre host 198.51.100.10 host 203.0.113.10
   permit gre host 198.51.100.20 host 203.0.113.10
+  permit gre host 198.51.100.10 host 203.0.113.11
+  permit gre host 198.51.100.20 host 203.0.113.11
   deny   gre any host 203.0.113.10 log
+  deny   gre any host 203.0.113.11 log
 ```
 
 > Adapt the syntax for your router platform. The same principle
-> applies to IPv6 ACLs for the IPv6 GRE tunnels.
+> applies to IPv6 ACLs for the IPv6 GRE tunnels. Both BIG-IP-A
+> (`203.0.113.10`) and BIG-IP-B (`203.0.113.11`) outer IPs must be
+> permitted as GRE destinations.
 
 ### Configure inner self IPs (BGP peering)
 
@@ -405,7 +520,7 @@ include `tcp:179` (BGP) for the peering session to establish. Adding
 `icmp:any` on the inner self IPs enables PMTUD and reachability
 testing through the tunnel:
 
-**Tunnel 1 — SJC:**
+**Tunnel SJC-1 — BIG-IP-A to SJC:**
 
 ```shell
 create net self xc-ddos-sjc1-inner-v4 \
@@ -421,7 +536,7 @@ create net self xc-ddos-sjc1-inner-v6 \
   address fd70:b364:3528:2b51::2/64
 ```
 
-**Tunnel 2 — IAD:**
+**Tunnel IAD-1 — BIG-IP-A to IAD:**
 
 ```shell
 create net self xc-ddos-iad1-inner-v4 \
@@ -437,6 +552,38 @@ create net self xc-ddos-iad1-inner-v6 \
   address fd70:b364:3528:2b52::2/64
 ```
 
+**Tunnel SJC-2 — BIG-IP-B to SJC:**
+
+```shell
+create net self xc-ddos-sjc2-inner-v4 \
+  vlan xc-ddos-sjc2-v4 \
+  traffic-group traffic-group-local-only \
+  allow-service add { tcp:179 icmp:any } \
+  address 10.10.10.10/30
+
+create net self xc-ddos-sjc2-inner-v6 \
+  vlan xc-ddos-sjc2-v6 \
+  traffic-group traffic-group-local-only \
+  allow-service add { tcp:179 icmp:any } \
+  address fd70:b364:3528:2b53::2/64
+```
+
+**Tunnel IAD-2 — BIG-IP-B to IAD:**
+
+```shell
+create net self xc-ddos-iad2-inner-v4 \
+  vlan xc-ddos-iad2-v4 \
+  traffic-group traffic-group-local-only \
+  allow-service add { tcp:179 icmp:any } \
+  address 10.10.10.14/30
+
+create net self xc-ddos-iad2-inner-v6 \
+  vlan xc-ddos-iad2-v6 \
+  traffic-group traffic-group-local-only \
+  allow-service add { tcp:179 icmp:any } \
+  address fd70:b364:3528:2b54::2/64
+```
+
 ### Verify dynamic routing (BGP) is licensed
 
 You must have **dynamic routing** licensed on BIG-IP. If you do not
@@ -445,6 +592,16 @@ see BGP options, contact your F5 account team to enable the feature.
 ### Configure BGP in Route Domain 0
 
 Use [imish][imish-docs] to configure BGP for Route Domain 0.
+
+> **Per-unit configuration**: The `imish` BGP configuration is local
+> to each BIG-IP unit. Each unit only configures neighbors for its
+> own tunnels:
+>
+> - **BIG-IP-A** configures SJC-1 and IAD-1 neighbors.
+> - **BIG-IP-B** configures SJC-2 and IAD-2 neighbors.
+>
+> The `router-id` must be unique per unit (use each unit's own outer
+> self IP).
 
 1. Enter imish for RD 0:
 
@@ -474,6 +631,8 @@ Use [imish][imish-docs] to configure BGP for Route Domain 0.
 > - `<BGP_MD5_PASSWORD>` with the agreed BGP MD5 password (or match
 >   Console "default secret"). Never reuse this password for other
 >   services.
+
+**BIG-IP-A** (router-id `203.0.113.10`, neighbors SJC-1 + IAD-1):
 
 ```text
 router bgp <YOUR_PUBLIC_ASN>
@@ -515,6 +674,68 @@ router bgp <YOUR_PUBLIC_ASN>
     neighbor fd70:b364:3528:2b51::1 description f5xc-sjc1-v6
     neighbor fd70:b364:3528:2b52::1 peer-group f5xc
     neighbor fd70:b364:3528:2b52::1 description f5xc-iad1-v6
+  exit-address-family
+
+ip prefix-list deny-all deny 0.0.0.0/0 le 32
+ip prefix-list route-to-f5-ipv4 permit 192.0.2.0/24
+
+ipv6 prefix-list deny-all6 deny ::/0 le 128
+ipv6 prefix-list route-to-f5-ipv6 permit 2001:db8:abcd::/48
+
+ip route 192.0.2.0 255.255.255.0 null0 201
+ipv6 route 2001:db8:abcd::/48 null0 201
+
+route-map route-to-f5-ipv4 permit 10
+  match ip address prefix-list route-to-f5-ipv4
+  set origin igp
+
+route-map route-to-f5-ipv6 permit 10
+  match ipv6 address prefix-list route-to-f5-ipv6
+  set origin igp
+```
+
+**BIG-IP-B** (router-id `203.0.113.11`, neighbors SJC-2 + IAD-2):
+
+```text
+router bgp <YOUR_PUBLIC_ASN>
+  no synchronization
+  bgp log-neighbor-changes
+  no auto-summary
+  bgp router-id 203.0.113.11
+  bgp graceful-restart restart-time 120
+  redistribute kernel route-map route-to-f5-ipv4
+
+  neighbor f5xc peer-group
+  neighbor f5xc remote-as <F5_XC_ASN>
+  neighbor f5xc description f5xc-peer-group
+  neighbor f5xc password <BGP_MD5_PASSWORD>
+  neighbor f5xc timers 10 30
+  neighbor f5xc soft-reconfiguration inbound
+  neighbor f5xc version 4
+  neighbor f5xc capability graceful-restart
+  neighbor f5xc send-community
+  neighbor f5xc ttl-security hops 1
+  neighbor f5xc maximum-prefix 10 warning-only
+  neighbor f5xc prefix-list deny-all in
+  neighbor f5xc prefix-list route-to-f5-ipv4 out
+
+  neighbor 10.10.10.9 peer-group f5xc
+  neighbor 10.10.10.9 description f5xc-sjc2-v4
+
+  neighbor 10.10.10.13 peer-group f5xc
+  neighbor 10.10.10.13 description f5xc-iad2-v4
+
+  address-family ipv6
+    redistribute kernel route-map route-to-f5-ipv6
+    neighbor f5xc activate
+    neighbor f5xc soft-reconfiguration inbound
+    neighbor f5xc capability graceful-restart
+    neighbor f5xc prefix-list deny-all6 in
+    neighbor f5xc prefix-list route-to-f5-ipv6 out
+    neighbor fd70:b364:3528:2b53::1 peer-group f5xc
+    neighbor fd70:b364:3528:2b53::1 description f5xc-sjc2-v6
+    neighbor fd70:b364:3528:2b54::1 peer-group f5xc
+    neighbor fd70:b364:3528:2b54::1 description f5xc-iad2-v6
   exit-address-family
 
 ip prefix-list deny-all deny 0.0.0.0/0 le 32
@@ -579,13 +800,17 @@ configuration.
 
 ### On BIG-IP
 
-Verify tunnels and MTU:
+Verify tunnels and MTU (run on each unit for its own tunnels):
 
 ```shell
 show net tunnels tunnel xc-ddos-sjc1-v4
 show net tunnels tunnel xc-ddos-sjc1-v6
+show net tunnels tunnel xc-ddos-sjc2-v4
+show net tunnels tunnel xc-ddos-sjc2-v6
 show net tunnels tunnel xc-ddos-iad1-v4
 show net tunnels tunnel xc-ddos-iad1-v6
+show net tunnels tunnel xc-ddos-iad2-v4
+show net tunnels tunnel xc-ddos-iad2-v6
 list net tunnels tunnel xc-ddos-sjc1-v4 all-properties
 ```
 
@@ -595,24 +820,38 @@ Verify self IPs:
 list net self xc-ddos-*
 ```
 
-Test reachability through the tunnel:
+Test reachability through the tunnel (from each unit):
 
 ```shell
+# BIG-IP-A tunnels
 ping 10.10.10.1 source 10.10.10.2
 ping 10.10.10.5 source 10.10.10.6
+
+# BIG-IP-B tunnels
+ping 10.10.10.9 source 10.10.10.10
+ping 10.10.10.13 source 10.10.10.14
 ```
 
-Verify BGP (in imish):
+Verify BGP (in imish on each unit):
 
 ```text
 show ip bgp summary
 show ipv6 bgp summary
 show ip bgp
 show ipv6 bgp
+
+# BIG-IP-A neighbors
 show ip bgp neighbors 10.10.10.1
 show ip bgp neighbors 10.10.10.5
 show ip bgp neighbors 10.10.10.1 advertised-routes
 show ip bgp neighbors 10.10.10.1 received-routes
+
+# BIG-IP-B neighbors
+show ip bgp neighbors 10.10.10.9
+show ip bgp neighbors 10.10.10.13
+show ip bgp neighbors 10.10.10.9 advertised-routes
+show ip bgp neighbors 10.10.10.9 received-routes
+
 show ip route
 show ipv6 route
 ```
@@ -628,6 +867,8 @@ show ipv6 route
 > 5. Verify prefix-lists and route-maps are applied correctly.
 > 6. Check `show ip bgp neighbors <IP>` for the last error/reset
 >    reason.
+> 7. On each HA unit, verify the unit's own tunnels are up and its
+>    own BGP neighbors are configured (not the other unit's).
 
 ### On F5 Distributed Cloud Console
 
@@ -640,8 +881,9 @@ Go to **DDoS and Transit Services >
 
 ## BIG-IP HA pair considerations
 
-If BIG-IP is deployed as an **active/standby HA pair**, additional
-planning is required:
+If BIG-IP is deployed as an **active/standby HA pair**, each unit
+gets its own independent GRE tunnels and BGP sessions to every
+scrubbing center:
 
 ```mermaid
 flowchart LR
@@ -651,50 +893,63 @@ flowchart LR
     end
 
     subgraph DC["Customer Data Center"]
-        FLOAT["Floating Self IP\ntraffic-group-1"]
-        ACTIVE["Active BIG-IP\nBGP Established"]
-        STANDBY["Standby BIG-IP\nGraceful-Restart Ready"]
+        subgraph UNITA["BIG-IP-A Active\n203.0.113.10"]
+            A_SJC["SJC-1 tunnel\nBGP Established"]
+            A_IAD["IAD-1 tunnel\nBGP Established"]
+        end
+        subgraph UNITB["BIG-IP-B Standby\n203.0.113.11"]
+            B_SJC["SJC-2 tunnel\nGraceful-Restart Ready"]
+            B_IAD["IAD-2 tunnel\nGraceful-Restart Ready"]
+        end
         SERVERS["Protected Servers\n192.0.2.0/24"]
     end
 
-    SJC -- "GRE tunnel 1" --> FLOAT
-    IAD -- "GRE tunnel 2" --> FLOAT
-    FLOAT --> ACTIVE
-    ACTIVE <-- "Config Sync +\nConnection Mirroring" --> STANDBY
-    ACTIVE -- "failover\nrun sys failover standby" -.-> STANDBY
-    ACTIVE --> SERVERS
+    SJC -- "GRE SJC-1" --> A_SJC
+    IAD -- "GRE IAD-1" --> A_IAD
+    SJC -- "GRE SJC-2" --> B_SJC
+    IAD -- "GRE IAD-2" --> B_IAD
+    UNITA <-- "Config Sync" --> UNITB
+    A_SJC --> SERVERS
+    A_IAD --> SERVERS
 
     style SJC fill:#4a90d9,color:#fff
     style IAD fill:#4a90d9,color:#fff
-    style ACTIVE fill:#2e7d32,color:#fff
-    style STANDBY fill:#f57f17,color:#fff
-    style FLOAT fill:#7b1fa2,color:#fff
+    style A_SJC fill:#2e7d32,color:#fff
+    style A_IAD fill:#2e7d32,color:#fff
+    style B_SJC fill:#f57f17,color:#fff
+    style B_IAD fill:#f57f17,color:#fff
 ```
 
-- **Tunnel endpoints**: The GRE `local-address` must be reachable
-  from both units. If using a floating self IP as the tunnel source,
-  assign the outer self IP to a **traffic-group** that floats
-  between units (not `traffic-group-local-only`). Alternatively,
-  keep non-floating tunnel endpoints and run independent BGP
-  sessions from each unit.
-- **BGP session failover**: During HA failover, the BGP session will
-  reset and reconverge. With `graceful-restart` enabled, the peer
-  (F5 Distributed Cloud) can maintain forwarding state during a
-  short restart window. Ensure the `restart-time` value (120 s in
-  the example) exceeds your expected failover time.
-- **Config sync**: Verify that tunnel, self IP, and routing
-  configurations are included in **config-sync**. Test a manual
-  failover (`run sys failover standby`) and confirm BGP
-  re-establishes on the newly active unit.
-- **Traffic-group alignment**: If both tunnels and application
-  virtual servers share the same traffic-group, failover is atomic.
-  If they are in different traffic-groups, partial failover
-  scenarios can occur.
+- **Independent tunnel endpoints**: Each BIG-IP unit has its own
+  non-floating outer self IP (`traffic-group-local-only`) and its
+  own set of GRE tunnels. BIG-IP-A uses `203.0.113.10` and
+  BIG-IP-B uses `203.0.113.11` as tunnel endpoints. This avoids
+  dependence on a floating IP for tunnel sourcing.
+- **Independent BGP sessions**: Each unit runs its own BGP sessions
+  over its own tunnels. BIG-IP-A peers with SJC-1 and IAD-1;
+  BIG-IP-B peers with SJC-2 and IAD-2. On failover the standby
+  unit's BGP sessions are already established, so F5 Distributed
+  Cloud can shift traffic immediately.
+- **Config sync**: Tunnel, self IP, and routing configurations are
+  synced between units via **config-sync**. Because the `imish`
+  BGP configuration is per-unit, each unit maintains its own
+  neighbor statements. Verify sync includes all tmsh objects.
+- **Active/standby BGP behavior**: The active unit advertises
+  protected prefixes with normal BGP attributes. The standby unit
+  can either advertise the same prefixes with a longer AS-path
+  prepend (making it less preferred) or suppress advertisements
+  until failover. Coordinate the approach with F5 SOC.
+- **Failover convergence**: With `graceful-restart` enabled and
+  independent tunnels, the new active unit already has established
+  BGP sessions. Convergence depends on BGP best-path selection
+  shifting to the newly active unit's advertisements. Test with
+  `run sys failover standby`.
 
-> The HA guidance above covers common active/standby patterns.
-> Validate your specific failover design with your F5 account team
-> before going to production, particularly around traffic-group
-> assignments and BGP reconvergence timing.
+> The independent-tunnel HA model above is the recommended approach
+> for customer-side device redundancy. Validate your specific
+> failover design with your F5 account team before going to
+> production, particularly around AS-path prepend strategy and BGP
+> reconvergence timing.
 
 <!-- Reference links -->
 
