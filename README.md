@@ -691,9 +691,10 @@ flowchart LR
   If they are in different traffic-groups, partial failover
   scenarios can occur.
 
-> This guide assumes a **standalone** BIG-IP. For HA pair
-> deployments, work with your F5 account team to validate the
-> failover design before going to production.
+> The HA guidance above covers common active/standby patterns.
+> Validate your specific failover design with your F5 account team
+> before going to production, particularly around traffic-group
+> assignments and BGP reconvergence timing.
 
 <!-- Reference links -->
 
