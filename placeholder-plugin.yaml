@@ -1,0 +1,111 @@
+settings:
+  replace_delay_millis: -1
+
+placeholders:
+  # --- XC Scrubbing Center Outer IPs ---
+  XC_SJC_OUTER_V4:
+    default: "198.51.100.10"
+    description: "F5 XC SJC scrubbing center outer IPv4"
+  XC_IAD_OUTER_V4:
+    default: "198.51.100.20"
+    description: "F5 XC IAD scrubbing center outer IPv4"
+  XC_SJC_OUTER_V6:
+    default: "2001:db8:100::1"
+    description: "F5 XC SJC scrubbing center outer IPv6"
+  XC_IAD_OUTER_V6:
+    default: "2001:db8:100::2"
+    description: "F5 XC IAD scrubbing center outer IPv6"
+
+  # --- BIG-IP Outer Self IPs (GRE Endpoints) ---
+  BIGIP_A_OUTER_V4:
+    default: "203.0.113.10"
+    description: "BIG-IP-A outer self IPv4 (GRE endpoint)"
+  BIGIP_B_OUTER_V4:
+    default: "203.0.113.11"
+    description: "BIG-IP-B outer self IPv4 (GRE endpoint)"
+  BIGIP_A_OUTER_V6:
+    default: "2001:db8:200::1"
+    description: "BIG-IP-A outer self IPv6 (GRE endpoint)"
+  BIGIP_B_OUTER_V6:
+    default: "2001:db8:200::2"
+    description: "BIG-IP-B outer self IPv6 (GRE endpoint)"
+
+  # --- Inner IPs: XC Side ---
+  XC_SJC1_INNER_V4:
+    default: "10.10.10.1"
+    description: "XC SJC-1 tunnel inner IPv4 (XC side)"
+  XC_IAD1_INNER_V4:
+    default: "10.10.10.5"
+    description: "XC IAD-1 tunnel inner IPv4 (XC side)"
+  XC_SJC2_INNER_V4:
+    default: "10.10.10.9"
+    description: "XC SJC-2 tunnel inner IPv4 (XC side)"
+  XC_IAD2_INNER_V4:
+    default: "10.10.10.13"
+    description: "XC IAD-2 tunnel inner IPv4 (XC side)"
+  XC_SJC1_INNER_V6:
+    default: "fd70:b364:3528:2b51::1"
+    description: "XC SJC-1 tunnel inner IPv6 (XC side)"
+  XC_IAD1_INNER_V6:
+    default: "fd70:b364:3528:2b52::1"
+    description: "XC IAD-1 tunnel inner IPv6 (XC side)"
+  XC_SJC2_INNER_V6:
+    default: "fd70:b364:3528:2b53::1"
+    description: "XC SJC-2 tunnel inner IPv6 (XC side)"
+  XC_IAD2_INNER_V6:
+    default: "fd70:b364:3528:2b54::1"
+    description: "XC IAD-2 tunnel inner IPv6 (XC side)"
+
+  # --- Inner IPs: BIG-IP Side ---
+  BIGIP_SJC1_INNER_V4:
+    default: "10.10.10.2"
+    description: "BIG-IP-A SJC-1 tunnel inner IPv4"
+  BIGIP_IAD1_INNER_V4:
+    default: "10.10.10.6"
+    description: "BIG-IP-A IAD-1 tunnel inner IPv4"
+  BIGIP_SJC2_INNER_V4:
+    default: "10.10.10.10"
+    description: "BIG-IP-B SJC-2 tunnel inner IPv4"
+  BIGIP_IAD2_INNER_V4:
+    default: "10.10.10.14"
+    description: "BIG-IP-B IAD-2 tunnel inner IPv4"
+  BIGIP_SJC1_INNER_V6:
+    default: "fd70:b364:3528:2b51::2"
+    description: "BIG-IP-A SJC-1 tunnel inner IPv6"
+  BIGIP_IAD1_INNER_V6:
+    default: "fd70:b364:3528:2b52::2"
+    description: "BIG-IP-A IAD-1 tunnel inner IPv6"
+  BIGIP_SJC2_INNER_V6:
+    default: "fd70:b364:3528:2b53::2"
+    description: "BIG-IP-B SJC-2 tunnel inner IPv6"
+  BIGIP_IAD2_INNER_V6:
+    default: "fd70:b364:3528:2b54::2"
+    description: "BIG-IP-B IAD-2 tunnel inner IPv6"
+
+  # --- Protected Prefixes ---
+  PROTECTED_PREFIX_V4:
+    default: "192.0.2.0/24"
+    description: "Protected IPv4 prefix with CIDR (e.g. 192.0.2.0/24)"
+  PROTECTED_PREFIX_V6:
+    default: "2001:db8:abcd::/48"
+    description: "Protected IPv6 prefix with CIDR (e.g. 2001:db8:abcd::/48)"
+  PROTECTED_NET_V4:
+    default: "192.0.2.0"
+    description: "Protected IPv4 network address (no mask)"
+  PROTECTED_MASK_V4:
+    default: "255.255.255.0"
+    description: "Protected IPv4 subnet mask (for ip route commands)"
+  PROTECTED_NET_V6:
+    default: "2001:db8:abcd::"
+    description: "Protected IPv6 network address (no prefix length)"
+
+  # --- BGP ---
+  CUSTOMER_ASN:
+    default: "65000"
+    description: "Your public ASN (registered with ARIN/RIR)"
+  F5_XC_ASN:
+    default: "64500"
+    description: "F5 Distributed Cloud ASN (provided by SOC)"
+  BGP_PASSWORD:
+    default: "s3cr3t"
+    description: "BGP MD5 authentication password"
