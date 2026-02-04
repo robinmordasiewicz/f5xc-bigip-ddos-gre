@@ -35,13 +35,13 @@ flowchart LR
     SERVERS --> BIGIP
     BIGIP -.->|"return traffic<br/>via ISP uplink<br/>(asymmetric path)"| INET
 
-    style DROP fill:#c62828,color:#fff
-    style INET fill:#616161,color:#fff
-    style SCRUB fill:#2e7d32,color:#fff
-    style BIGIP fill:#1565c0,color:#fff
-    style SERVERS fill:#1565c0,color:#fff
-    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
-    style XC fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style DROP fill:#8E2424,color:#fff,stroke:#C62828
+    style INET fill:#455A64,color:#fff,stroke:#78909C
+    style SCRUB fill:#00838F,color:#fff,stroke:#00ACC1
+    style BIGIP fill:#1565C0,color:#fff,stroke:#42A5F5
+    style SERVERS fill:#37474F,color:#fff,stroke:#78909C
+    style DC fill:#263238,stroke:#78909C,color:#fff
+    style XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 ### Prerequisites
@@ -137,14 +137,14 @@ flowchart LR
     BIGIPA --> NET
     BIGIPB --> NET
 
-    style INET fill:#616161,color:#fff
-    style SJC fill:#4a90d9,color:#fff
-    style IAD fill:#4a90d9,color:#fff
-    style BIGIPA fill:#2e7d32,color:#fff
-    style BIGIPB fill:#f57f17,color:#fff
-    style NET fill:#1565c0,color:#fff
-    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
-    style XC fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style INET fill:#455A64,color:#fff,stroke:#78909C
+    style SJC fill:#1565C0,color:#fff,stroke:#42A5F5
+    style IAD fill:#1565C0,color:#fff,stroke:#42A5F5
+    style BIGIPA fill:#00695C,color:#fff,stroke:#26A69A
+    style BIGIPB fill:#BF360C,color:#fff,stroke:#FF8F00
+    style NET fill:#37474F,color:#fff,stroke:#78909C
+    style DC fill:#263238,stroke:#78909C,color:#fff
+    style XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 ### F5 Distributed Cloud (scrubbing center) sample
@@ -273,14 +273,16 @@ flowchart LR
     SJC -. "BGP tcp/179<br/>xXC_SJC2_INNER_V4x &#8594; xBIGIP_SJC2_INNER_V4x" .-> T3_INNER
     IAD -. "BGP tcp/179<br/>xXC_IAD2_INNER_V4x &#8594; xBIGIP_IAD2_INNER_V4x" .-> T4_INNER
 
-    style SJC fill:#4a90d9,color:#fff
-    style IAD fill:#4a90d9,color:#fff
-    style T1_INNER fill:#2e7d32,color:#fff
-    style T2_INNER fill:#2e7d32,color:#fff
-    style T3_INNER fill:#f57f17,color:#fff
-    style T4_INNER fill:#f57f17,color:#fff
-    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
-    style XC fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style SJC fill:#1565C0,color:#fff,stroke:#42A5F5
+    style IAD fill:#1565C0,color:#fff,stroke:#42A5F5
+    style T1_INNER fill:#00695C,color:#fff,stroke:#26A69A
+    style T2_INNER fill:#00695C,color:#fff,stroke:#26A69A
+    style T3_INNER fill:#BF360C,color:#fff,stroke:#FF8F00
+    style T4_INNER fill:#BF360C,color:#fff,stroke:#FF8F00
+    style BIGIPA fill:#1A332D,stroke:#4DB6AC,color:#fff
+    style BIGIPB fill:#33261A,stroke:#FFB74D,color:#fff
+    style DC fill:#263238,stroke:#78909C,color:#fff
+    style XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 ---
@@ -955,14 +957,17 @@ flowchart LR
     UNITA --> SERVERS
     UNITB --> SERVERS
 
-    style SJC fill:#4a90d9,color:#fff
-    style IAD fill:#4a90d9,color:#fff
-    style A_SJC fill:#2e7d32,color:#fff
-    style A_IAD fill:#2e7d32,color:#fff
-    style B_SJC fill:#f57f17,color:#fff
-    style B_IAD fill:#f57f17,color:#fff
-    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
-    style F5XC fill:#e8f5e9,stroke:#2e7d32,color:#000
+    style SJC fill:#1565C0,color:#fff,stroke:#42A5F5
+    style IAD fill:#1565C0,color:#fff,stroke:#42A5F5
+    style A_SJC fill:#00695C,color:#fff,stroke:#26A69A
+    style A_IAD fill:#00695C,color:#fff,stroke:#26A69A
+    style B_SJC fill:#BF360C,color:#fff,stroke:#FF8F00
+    style B_IAD fill:#BF360C,color:#fff,stroke:#FF8F00
+    style SERVERS fill:#37474F,color:#fff,stroke:#78909C
+    style UNITA fill:#1A332D,stroke:#4DB6AC,color:#fff
+    style UNITB fill:#33261A,stroke:#FFB74D,color:#fff
+    style DC fill:#263238,stroke:#78909C,color:#fff
+    style F5XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 - **Independent tunnel endpoints**: Each BIG-IP unit has its own
