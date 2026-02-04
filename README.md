@@ -16,24 +16,24 @@ for tunnel and BGP configuration in the Console.
 
 ```mermaid
 flowchart LR
-    ATK["Attack Traffic"]
-    LEGIT["Legitimate Traffic"]
+    INET["Internet<br/>Inbound Traffic"]
 
-    subgraph XC["F5 Distributed Cloud\nGlobal Anycast"]
-        SCRUB["DDoS Scrubbing\nL3/L4 Mitigation"]
+    subgraph XC["F5 Distributed Cloud<br/>Global Anycast"]
+        SCRUB["DDoS Scrubbing<br/>L3/L4 Mitigation"]
+        DROP["Attack Traffic<br/>Dropped"]
     end
 
     BIGIP["BIG-IP CPE"]
     SERVERS["Protected Servers"]
 
-    ATK -->|"volumetric flood"| XC
-    LEGIT -->|"normal requests"| XC
-    SCRUB -- "clean traffic via GRE" --> BIGIP
+    INET -->|"all traffic<br/>(attack + legitimate)"| SCRUB
+    SCRUB -->|"clean traffic<br/>via GRE"| BIGIP
+    SCRUB -.->|"malicious traffic"| DROP
     BIGIP --> SERVERS
-    SERVERS -.->|"return traffic\nnormal routing"| LEGIT
+    SERVERS -.->|"return traffic<br/>via normal routing<br/>(asymmetric path)"| INET
 
-    style ATK fill:#c62828,color:#fff
-    style LEGIT fill:#616161,color:#fff
+    style DROP fill:#c62828,color:#fff
+    style INET fill:#616161,color:#fff
     style SCRUB fill:#2e7d32,color:#fff
     style BIGIP fill:#1565c0,color:#fff
     style SERVERS fill:#1565c0,color:#fff
@@ -100,17 +100,17 @@ This guide assumes **Route Domain 0** (the default).
 
 ```mermaid
 flowchart LR
-    INET["Internet\nInbound Traffic"]
+    INET["Internet<br/>Inbound Traffic"]
 
     subgraph XC["F5 Distributed Cloud"]
-        SJC["SJC Scrubbing\n198.51.100.10"]
-        IAD["IAD Scrubbing\n198.51.100.20"]
+        SJC["SJC Scrubbing<br/>198.51.100.10"]
+        IAD["IAD Scrubbing<br/>198.51.100.20"]
     end
 
     subgraph DC["Customer Data Center"]
-        BIGIPA["BIG-IP-A\n203.0.113.10"]
-        BIGIPB["BIG-IP-B\n203.0.113.11"]
-        NET["Protected Network\n192.0.2.0/24\n2001:db8:abcd::/48"]
+        BIGIPA["BIG-IP-A<br/>203.0.113.10"]
+        BIGIPB["BIG-IP-B<br/>203.0.113.11"]
+        NET["Protected Network<br/>192.0.2.0/24<br/>2001:db8:abcd::/48"]
     end
 
     INET --> SJC
@@ -228,29 +228,29 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph XC["F5 Distributed Cloud"]
-        SJC["SJC\n198.51.100.10\n2001:db8:100::1"]
-        IAD["IAD\n198.51.100.20\n2001:db8:100::2"]
+        SJC["SJC<br/>198.51.100.10<br/>2001:db8:100::1"]
+        IAD["IAD<br/>198.51.100.20<br/>2001:db8:100::2"]
     end
 
-    subgraph BIGIPA["BIG-IP-A\n203.0.113.10\n2001:db8:200::1"]
-        T1_INNER["SJC-1 Inner\n10.10.10.2\nfd70:..2b51::2"]
-        T2_INNER["IAD-1 Inner\n10.10.10.6\nfd70:..2b52::2"]
+    subgraph BIGIPA["BIG-IP-A<br/>203.0.113.10<br/>2001:db8:200::1"]
+        T1_INNER["SJC-1 Inner<br/>10.10.10.2<br/>fd70:..2b51::2"]
+        T2_INNER["IAD-1 Inner<br/>10.10.10.6<br/>fd70:..2b52::2"]
     end
 
-    subgraph BIGIPB["BIG-IP-B\n203.0.113.11\n2001:db8:200::2"]
-        T3_INNER["SJC-2 Inner\n10.10.10.10\nfd70:..2b53::2"]
-        T4_INNER["IAD-2 Inner\n10.10.10.14\nfd70:..2b54::2"]
+    subgraph BIGIPB["BIG-IP-B<br/>203.0.113.11<br/>2001:db8:200::2"]
+        T3_INNER["SJC-2 Inner<br/>10.10.10.10<br/>fd70:..2b53::2"]
+        T4_INNER["IAD-2 Inner<br/>10.10.10.14<br/>fd70:..2b54::2"]
     end
 
-    SJC == "GRE SJC-1\n198.51.100.10 to 203.0.113.10" ==> T1_INNER
-    IAD == "GRE IAD-1\n198.51.100.20 to 203.0.113.10" ==> T2_INNER
-    SJC == "GRE SJC-2\n198.51.100.10 to 203.0.113.11" ==> T3_INNER
-    IAD == "GRE IAD-2\n198.51.100.20 to 203.0.113.11" ==> T4_INNER
+    SJC == "GRE SJC-1<br/>198.51.100.10 to 203.0.113.10" ==> T1_INNER
+    IAD == "GRE IAD-1<br/>198.51.100.20 to 203.0.113.10" ==> T2_INNER
+    SJC == "GRE SJC-2<br/>198.51.100.10 to 203.0.113.11" ==> T3_INNER
+    IAD == "GRE IAD-2<br/>198.51.100.20 to 203.0.113.11" ==> T4_INNER
 
-    SJC -. "BGP tcp/179\n10.10.10.1 to 10.10.10.2" .-> T1_INNER
-    IAD -. "BGP tcp/179\n10.10.10.5 to 10.10.10.6" .-> T2_INNER
-    SJC -. "BGP tcp/179\n10.10.10.9 to 10.10.10.10" .-> T3_INNER
-    IAD -. "BGP tcp/179\n10.10.10.13 to 10.10.10.14" .-> T4_INNER
+    SJC -. "BGP tcp/179<br/>10.10.10.1 to 10.10.10.2" .-> T1_INNER
+    IAD -. "BGP tcp/179<br/>10.10.10.5 to 10.10.10.6" .-> T2_INNER
+    SJC -. "BGP tcp/179<br/>10.10.10.9 to 10.10.10.10" .-> T3_INNER
+    IAD -. "BGP tcp/179<br/>10.10.10.13 to 10.10.10.14" .-> T4_INNER
 
     style SJC fill:#4a90d9,color:#fff
     style IAD fill:#4a90d9,color:#fff
@@ -893,15 +893,15 @@ flowchart LR
     end
 
     subgraph DC["Customer Data Center"]
-        subgraph UNITA["BIG-IP-A Active\n203.0.113.10"]
-            A_SJC["SJC-1 tunnel\nBGP Established"]
-            A_IAD["IAD-1 tunnel\nBGP Established"]
+        subgraph UNITA["BIG-IP-A Active<br/>203.0.113.10"]
+            A_SJC["SJC-1 tunnel<br/>BGP Established"]
+            A_IAD["IAD-1 tunnel<br/>BGP Established"]
         end
-        subgraph UNITB["BIG-IP-B Standby\n203.0.113.11"]
-            B_SJC["SJC-2 tunnel\nGraceful-Restart Ready"]
-            B_IAD["IAD-2 tunnel\nGraceful-Restart Ready"]
+        subgraph UNITB["BIG-IP-B Standby<br/>203.0.113.11"]
+            B_SJC["SJC-2 tunnel<br/>Graceful-Restart Ready"]
+            B_IAD["IAD-2 tunnel<br/>Graceful-Restart Ready"]
         end
-        SERVERS["Protected Servers\n192.0.2.0/24"]
+        SERVERS["Protected Servers<br/>192.0.2.0/24"]
     end
 
     SJC -- "GRE SJC-1" --> A_SJC
