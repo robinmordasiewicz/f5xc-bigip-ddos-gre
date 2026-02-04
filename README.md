@@ -53,8 +53,11 @@ flowchart LR
   - **Dynamic routing (BGP)** licensed and enabled.
 - Routed mode: at least one **publicly advertised /24 (or shorter)**
   prefix for protection (IPv6 minimum is **/48**).
-  - GRE outer endpoints and protected prefixes **must be publicly
-    routable** (non-RFC 1918).
+  - Protected prefixes **must be publicly routable** (non-RFC 1918).
+    GRE outer endpoints must also be publicly routable when tunnels
+    traverse the public Internet; deployments using private
+    connectivity (L2, private peering) may use RFC 1918 endpoint
+    addresses.
 - Connectivity between your data center/router and the F5 Distributed
   Cloud scrubbing center(s).
 
@@ -95,8 +98,10 @@ This guide assumes **Route Domain 0** (the default).
 > **These are example values.** Replace with customer-specific and
 > F5-provided values.
 >
-> GRE outer endpoint IPs and protected prefixes **must be publicly
-> routable** (non-RFC 1918). See
+> Protected prefixes **must be publicly routable** (non-RFC 1918).
+> GRE outer endpoint IPs must also be publicly routable when tunnels
+> traverse the public Internet; private connectivity (L2, private
+> peering) may allow RFC 1918 endpoints. See
 > [K000147949][k000147949] for examples using proper documentation
 > addresses.
 >
@@ -185,9 +190,9 @@ flowchart LR
 
 > **Inner (transit) IPs** such as `10.10.10.0/30` use RFC 1918
 > addresses. This is correct because they are encapsulated inside the
-> GRE tunnel and never appear on the public Internet. The "must be
-> publicly routable" requirement applies only to outer endpoint IPs
-> and protected prefixes.
+> GRE tunnel and never appear on the public Internet. Protected
+> prefixes must always be publicly routable; outer endpoint IPs must
+> be publicly routable when tunnels traverse the public Internet.
 
 > **IPv6 inner links** use /64 prefixes here to match common F5
 > Distributed Cloud defaults. For point-to-point links, /127 is
@@ -317,7 +322,8 @@ Before you can configure tunnels and BGP:
      - **IP Over IP** for IPv4-in-IPv4 encapsulation.
      - **IPv6 Over IPv6** for IPv6-in-IPv6 encapsulation.
    - **Customer Endpoint IP**: BIG-IP's external address (outer self
-     IP, must be publicly routable).
+     IP, must be publicly routable when tunnels traverse the public
+     Internet).
    - Optional: IPv4/IPv6 interconnect, fragmentation, keepalive (all
      disabled by default).
 1. Under **Tunnel BGP Information**:
