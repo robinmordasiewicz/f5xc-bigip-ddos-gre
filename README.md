@@ -23,20 +23,25 @@ flowchart LR
         DROP["Attack Traffic<br/>Dropped"]
     end
 
-    BIGIP["BIG-IP CPE"]
-    SERVERS["Protected Servers"]
+    subgraph DC["Customer Data Center"]
+        BIGIP["BIG-IP CPE<br/>(GRE endpoint)"]
+        SERVERS["Protected Servers"]
+    end
 
     INET -->|"all traffic<br/>(attack + legitimate)"| SCRUB
-    SCRUB -->|"clean traffic<br/>via GRE"| BIGIP
+    SCRUB --> BIGIP
     SCRUB -.->|"malicious traffic"| DROP
     BIGIP --> SERVERS
-    SERVERS -.->|"return traffic<br/>via normal routing<br/>(asymmetric path)"| INET
+    SERVERS --> BIGIP
+    BIGIP -.->|"return traffic<br/>via ISP uplink<br/>(asymmetric path)"| INET
 
     style DROP fill:#c62828,color:#fff
     style INET fill:#616161,color:#fff
     style SCRUB fill:#2e7d32,color:#fff
     style BIGIP fill:#1565c0,color:#fff
     style SERVERS fill:#1565c0,color:#fff
+    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
+    style XC fill:#e8f5e9,stroke:#2e7d32,color:#000
 ```
 
 ## Environment
@@ -128,6 +133,8 @@ flowchart LR
     style BIGIPA fill:#2e7d32,color:#fff
     style BIGIPB fill:#f57f17,color:#fff
     style NET fill:#1565c0,color:#fff
+    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
+    style XC fill:#e8f5e9,stroke:#2e7d32,color:#000
 ```
 
 ### F5 Distributed Cloud (scrubbing center) sample
@@ -232,14 +239,16 @@ flowchart LR
         IAD["IAD<br/>198.51.100.20<br/>2001:db8:100::2"]
     end
 
-    subgraph BIGIPA["BIG-IP-A<br/>203.0.113.10<br/>2001:db8:200::1"]
-        T1_INNER["SJC-1 Inner<br/>10.10.10.2<br/>fd70:..2b51::2"]
-        T2_INNER["IAD-1 Inner<br/>10.10.10.6<br/>fd70:..2b52::2"]
-    end
+    subgraph DC["Customer Data Center"]
+        subgraph BIGIPA["BIG-IP-A<br/>203.0.113.10<br/>2001:db8:200::1"]
+            T1_INNER["SJC-1 Inner<br/>10.10.10.2<br/>fd70:..2b51::2"]
+            T2_INNER["IAD-1 Inner<br/>10.10.10.6<br/>fd70:..2b52::2"]
+        end
 
-    subgraph BIGIPB["BIG-IP-B<br/>203.0.113.11<br/>2001:db8:200::2"]
-        T3_INNER["SJC-2 Inner<br/>10.10.10.10<br/>fd70:..2b53::2"]
-        T4_INNER["IAD-2 Inner<br/>10.10.10.14<br/>fd70:..2b54::2"]
+        subgraph BIGIPB["BIG-IP-B<br/>203.0.113.11<br/>2001:db8:200::2"]
+            T3_INNER["SJC-2 Inner<br/>10.10.10.10<br/>fd70:..2b53::2"]
+            T4_INNER["IAD-2 Inner<br/>10.10.10.14<br/>fd70:..2b54::2"]
+        end
     end
 
     SJC == "GRE SJC-1<br/>198.51.100.10 to 203.0.113.10" ==> T1_INNER
@@ -258,6 +267,8 @@ flowchart LR
     style T2_INNER fill:#2e7d32,color:#fff
     style T3_INNER fill:#f57f17,color:#fff
     style T4_INNER fill:#f57f17,color:#fff
+    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
+    style XC fill:#e8f5e9,stroke:#2e7d32,color:#000
 ```
 
 ## F5 Distributed Cloud configuration (Console)
@@ -893,11 +904,12 @@ flowchart LR
     end
 
     subgraph DC["Customer Data Center"]
-        subgraph UNITA["BIG-IP-A Active<br/>203.0.113.10"]
+        direction TB
+        subgraph UNITA["BIG-IP-A (Active)"]
             A_SJC["SJC-1 tunnel<br/>BGP Established"]
             A_IAD["IAD-1 tunnel<br/>BGP Established"]
         end
-        subgraph UNITB["BIG-IP-B Standby<br/>203.0.113.11"]
+        subgraph UNITB["BIG-IP-B (Standby)"]
             B_SJC["SJC-2 tunnel<br/>Graceful-Restart Ready"]
             B_IAD["IAD-2 tunnel<br/>Graceful-Restart Ready"]
         end
@@ -908,9 +920,8 @@ flowchart LR
     IAD -- "GRE IAD-1" --> A_IAD
     SJC -- "GRE SJC-2" --> B_SJC
     IAD -- "GRE IAD-2" --> B_IAD
-    UNITA <-- "Config Sync" --> UNITB
-    A_SJC --> SERVERS
-    A_IAD --> SERVERS
+    UNITA --> SERVERS
+    UNITB --> SERVERS
 
     style SJC fill:#4a90d9,color:#fff
     style IAD fill:#4a90d9,color:#fff
@@ -918,6 +929,8 @@ flowchart LR
     style A_IAD fill:#2e7d32,color:#fff
     style B_SJC fill:#f57f17,color:#fff
     style B_IAD fill:#f57f17,color:#fff
+    style DC fill:#e3f2fd,stroke:#1565c0,color:#000
+    style F5XC fill:#e8f5e9,stroke:#2e7d32,color:#000
 ```
 
 - **Independent tunnel endpoints**: Each BIG-IP unit has its own
