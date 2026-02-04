@@ -1,33 +1,5 @@
 # F5 Distributed Cloud DDoS Mitigation (Routed Mode) — BIG-IP GRE & BGP
 
-## Your environment values
-
-!!! tip "Enter your values"
-    Fill in the tables below with your actual IPs, ASN, and BGP password.
-    Values are saved in your browser and substituted throughout this guide.
-
-### Outer IPs (GRE tunnel endpoints)
-
-<div class="auto-input-table" data-placeholder-list="XC_SJC_OUTER_V4,XC_IAD_OUTER_V4,XC_SJC_OUTER_V6,XC_IAD_OUTER_V6,BIGIP_A_OUTER_V4,BIGIP_B_OUTER_V4,BIGIP_A_OUTER_V6,BIGIP_B_OUTER_V6"></div>
-
-### Inner IPs — F5 XC side
-
-<div class="auto-input-table" data-placeholder-list="XC_SJC1_INNER_V4,XC_IAD1_INNER_V4,XC_SJC2_INNER_V4,XC_IAD2_INNER_V4,XC_SJC1_INNER_V6,XC_IAD1_INNER_V6,XC_SJC2_INNER_V6,XC_IAD2_INNER_V6"></div>
-
-### Inner IPs — BIG-IP side
-
-<div class="auto-input-table" data-placeholder-list="BIGIP_SJC1_INNER_V4,BIGIP_IAD1_INNER_V4,BIGIP_SJC2_INNER_V4,BIGIP_IAD2_INNER_V4,BIGIP_SJC1_INNER_V6,BIGIP_IAD1_INNER_V6,BIGIP_SJC2_INNER_V6,BIGIP_IAD2_INNER_V6"></div>
-
-### Protected prefixes
-
-<div class="auto-input-table" data-placeholder-list="PROTECTED_PREFIX_V4,PROTECTED_PREFIX_V6,PROTECTED_NET_V4,PROTECTED_MASK_V4,PROTECTED_NET_V6"></div>
-
-### BGP settings
-
-<div class="auto-input-table" data-placeholder-list="CUSTOMER_ASN,F5_XC_ASN,BGP_PASSWORD"></div>
-
----
-
 ## Purpose
 
 This guide explains how to:
@@ -412,8 +384,8 @@ routed configuration setup with F5 XC, see [K000147949][k000147949].
 
 !!! tip "Placeholder values"
     All IPs, ASNs, and passwords below are substituted from the
-    [environment values](#your-environment-values) at the top of this
-    page. Edit them there to update every command below.
+    placeholder input table at the top of this page. Edit them there
+    to update every command below.
 
 ### Open tmsh
 
