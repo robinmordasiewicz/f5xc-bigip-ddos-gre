@@ -1,0 +1,27 @@
+/* White canvas for Mermaid diagrams on both themes */
+.mermaid {
+  background: #fff;
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+/*
+ * Force light-theme Mermaid rendering inside the dark (slate) scheme.
+ * CSS custom properties pierce shadow DOM, so overriding --md-default-*
+ * and --md-mermaid-* on .mermaid makes the shadow-rendered SVG use
+ * light colors even when the page is in dark mode.
+ */
+[data-md-color-scheme="slate"] .mermaid {
+  --md-default-bg-color: #ffffff;
+  --md-default-fg-color: hsla(0, 0%, 0%, 0.87);
+  --md-default-fg-color--light: hsla(0, 0%, 0%, 0.54);
+  --md-default-fg-color--lighter: hsla(0, 0%, 0%, 0.32);
+  --md-default-fg-color--lightest: hsla(0, 0%, 0%, 0.07);
+  --md-code-fg-color: hsla(0, 0%, 13%, 0.82);
+  --md-code-bg-color: hsla(0, 0%, 96%, 1);
+  --md-mermaid-label-bg-color: #ffffff;
+  --md-mermaid-label-fg-color: hsla(0, 0%, 13%, 0.82);
+  --md-mermaid-edge-color: hsla(0, 0%, 13%, 0.82);
+  --md-mermaid-node-bg-color: #526cfe1a;
+  --md-mermaid-node-fg-color: #526cfe;
+}
