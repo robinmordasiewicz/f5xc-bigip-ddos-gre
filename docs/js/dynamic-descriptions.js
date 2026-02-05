@@ -635,17 +635,229 @@
 })();
 
 /**
- * TOC Collapsible Sections
- * Adds click-to-expand/collapse functionality to TOC items with nested children
+ * TOC Collapsible Sections with Auto-Expand on Scroll
+ * - All sections collapsed by default on page load
+ * - Auto-expands TOC section when user scrolls to corresponding content
+ * - Auto-collapses when user scrolls away
+ * - Preserves manual click-to-toggle with 3s override window
+ * - WCAG compliant with aria-expanded attributes
  */
 (function() {
   'use strict';
 
+  // Configuration
+  var CONFIG = {
+    rootMargin: '-80px 0px -60% 0px', // Account for fixed header
+    threshold: 0,
+    debounceDelay: 100,
+    manualOverrideTimeout: 3000 // 3 seconds
+  };
+
+  // State
+  var headingToTocMap = new Map();
+  var activeHeadings = new Set();
+  var observer = null;
+  var manualOverrides = new Map(); // Track manual toggle timestamps
+
+  /**
+   * Collapse a TOC item
+   */
+  function collapseItem(item) {
+    if (!item || item.classList.contains('toc-collapsed')) return;
+
+    var nestedNav = item.querySelector(':scope > .md-nav');
+    var link = item.querySelector(':scope > .md-nav__link');
+
+    item.classList.add('toc-collapsed');
+    if (nestedNav) {
+      nestedNav.style.maxHeight = '0';
+    }
+    if (link) {
+      link.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  /**
+   * Expand a TOC item
+   */
+  function expandItem(item) {
+    if (!item || !item.classList.contains('toc-collapsed')) return;
+
+    var nestedNav = item.querySelector(':scope > .md-nav');
+    var link = item.querySelector(':scope > .md-nav__link');
+
+    item.classList.remove('toc-collapsed');
+    if (nestedNav) {
+      nestedNav.style.maxHeight = nestedNav.scrollHeight + 'px';
+    }
+    if (link) {
+      link.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  /**
+   * Expand parent chain for nested sections
+   */
+  function expandParentChain(item) {
+    var parent = item.parentElement;
+    while (parent) {
+      if (parent.classList.contains('md-nav__item')) {
+        expandItem(parent);
+      }
+      parent = parent.parentElement;
+    }
+  }
+
+  /**
+   * Check if item has manual override active
+   */
+  function hasManualOverride(item) {
+    var timestamp = manualOverrides.get(item);
+    if (!timestamp) return false;
+
+    var elapsed = Date.now() - timestamp;
+    if (elapsed > CONFIG.manualOverrideTimeout) {
+      manualOverrides.delete(item);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Build mapping from heading IDs to TOC items
+   */
+  function buildHeadingTocMap() {
+    headingToTocMap.clear();
+
+    var tocNav = document.querySelector('.md-nav--secondary');
+    if (!tocNav) return;
+
+    var tocLinks = tocNav.querySelectorAll('.md-nav__link');
+
+    tocLinks.forEach(function(link) {
+      var href = link.getAttribute('href');
+      if (!href || !href.startsWith('#')) return;
+
+      var headingId = href.slice(1);
+      var tocItem = link.closest('.md-nav__item');
+
+      // Find the parent item with nested nav (the collapsible section)
+      var parentWithNav = tocItem;
+      while (parentWithNav) {
+        var nestedNav = parentWithNav.querySelector(':scope > .md-nav');
+        if (nestedNav) {
+          headingToTocMap.set(headingId, parentWithNav);
+          break;
+        }
+        // Check if this item itself is inside a collapsible section
+        var parentItem = parentWithNav.parentElement?.closest('.md-nav__item');
+        if (parentItem) {
+          var parentNestedNav = parentItem.querySelector(':scope > .md-nav');
+          if (parentNestedNav) {
+            headingToTocMap.set(headingId, parentItem);
+            break;
+          }
+        }
+        parentWithNav = parentItem;
+      }
+    });
+  }
+
+  /**
+   * Debounced intersection handler
+   */
+  var debounceTimer = null;
+  function handleIntersection(entries) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() {
+      processIntersections(entries);
+    }, CONFIG.debounceDelay);
+  }
+
+  /**
+   * Process intersection entries
+   */
+  function processIntersections(entries) {
+    entries.forEach(function(entry) {
+      var headingId = entry.target.id;
+      var tocItem = headingToTocMap.get(headingId);
+
+      if (!tocItem) return;
+
+      // Skip if manual override is active
+      if (hasManualOverride(tocItem)) return;
+
+      if (entry.isIntersecting) {
+        activeHeadings.add(headingId);
+        expandItem(tocItem);
+        expandParentChain(tocItem);
+      } else {
+        activeHeadings.delete(headingId);
+
+        // Only collapse if no other headings in this section are visible
+        var shouldCollapse = true;
+        headingToTocMap.forEach(function(item, id) {
+          if (item === tocItem && activeHeadings.has(id)) {
+            shouldCollapse = false;
+          }
+        });
+
+        if (shouldCollapse) {
+          collapseItem(tocItem);
+        }
+      }
+    });
+  }
+
+  /**
+   * Set up Intersection Observer for content headings
+   */
+  function setupIntersectionObserver() {
+    if (observer) {
+      observer.disconnect();
+    }
+
+    var headings = document.querySelectorAll('article h2[id], article h3[id], article h4[id]');
+    if (headings.length === 0) return;
+
+    observer = new IntersectionObserver(handleIntersection, {
+      rootMargin: CONFIG.rootMargin,
+      threshold: CONFIG.threshold
+    });
+
+    headings.forEach(function(heading) {
+      observer.observe(heading);
+    });
+  }
+
+  /**
+   * Handle manual click toggle
+   */
+  function handleClickToggle(item, link, nestedNav) {
+    link.addEventListener('click', function(e) {
+      // Record manual override timestamp
+      manualOverrides.set(item, Date.now());
+
+      // Toggle state
+      if (item.classList.contains('toc-collapsed')) {
+        expandItem(item);
+      } else {
+        collapseItem(item);
+      }
+    });
+  }
+
+  /**
+   * Initialize TOC collapse functionality
+   */
   function initTocCollapse() {
     var tocNav = document.querySelector('.md-nav--secondary');
     if (!tocNav) return;
 
-    // Find all TOC items that have nested children
+    // Build heading to TOC mapping
+    buildHeadingTocMap();
+
+    // Find all TOC items with nested children
     var parentItems = tocNav.querySelectorAll('.md-nav__item');
 
     parentItems.forEach(function(item) {
@@ -655,29 +867,48 @@
       var link = item.querySelector(':scope > .md-nav__link');
       if (!link) return;
 
-      // Set initial expanded state and measure height
+      // Set max-height for animation
       nestedNav.style.maxHeight = nestedNav.scrollHeight + 'px';
 
-      // Add click handler to toggle collapse
-      link.addEventListener('click', function(e) {
-        // Only toggle if clicking on the link itself, not navigating
-        // Allow navigation but also toggle
-        item.classList.toggle('toc-collapsed');
+      // Collapse all sections by default
+      collapseItem(item);
 
-        if (item.classList.contains('toc-collapsed')) {
-          nestedNav.style.maxHeight = '0';
-        } else {
-          nestedNav.style.maxHeight = nestedNav.scrollHeight + 'px';
-        }
-      });
+      // Add click handler for manual toggle
+      handleClickToggle(item, link, nestedNav);
     });
+
+    // Set up Intersection Observer for auto-expand
+    setupIntersectionObserver();
+  }
+
+  /**
+   * Cleanup function for MkDocs instant navigation
+   */
+  function cleanup() {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    headingToTocMap.clear();
+    activeHeadings.clear();
+    manualOverrides.clear();
+    clearTimeout(debounceTimer);
   }
 
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTocCollapse);
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(initTocCollapse, 100);
+    });
   } else {
-    // Small delay to ensure Material theme has rendered
     setTimeout(initTocCollapse, 100);
+  }
+
+  // Support MkDocs instant navigation
+  if (typeof document$ !== 'undefined') {
+    document$.subscribe(function() {
+      cleanup();
+      setTimeout(initTocCollapse, 100);
+    });
   }
 })();

@@ -95,3 +95,33 @@
   max-height: 0 !important;
   opacity: 0;
 }
+
+/* ============================================
+   Wider Left Sidebar Layout
+   ============================================ */
+
+@media screen and (min-width: 60em) {
+  .md-sidebar--primary {
+    width: 14rem;
+  }
+}
+
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 16rem;
+  }
+
+  .md-sidebar--primary ~ .md-content > .md-content__inner {
+    margin-left: 0.4rem;
+  }
+}
+
+/* ============================================
+   Enhanced TOC Animation (prefers-reduced-motion)
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .md-nav--secondary > .md-nav__list > .md-nav__item > .md-nav {
+    transition: none;
+  }
+}
