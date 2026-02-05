@@ -2,6 +2,11 @@ settings:
   replace_delay_millis: -1
 
 placeholders:
+  # --- Customer Data Center ---
+  DC_NAME:
+    description: "Customer data center name"
+    default: "DC1"
+
   # --- Scrubbing Center Selection ---
   CENTER_1:
     description: "Primary F5 XC DDoS scrubbing center"
@@ -46,16 +51,16 @@ placeholders:
   # --- XC Scrubbing Center Outer IPs ---
   XC_C1_OUTER_V4:
     default: "198.51.100.10"
-    description: "F5 XC primary scrubbing center outer IPv4"
+    description: "F5 XC Center 1 scrubbing center outer IPv4"
   XC_C2_OUTER_V4:
     default: "198.51.100.20"
-    description: "F5 XC secondary scrubbing center outer IPv4"
+    description: "F5 XC Center 2 scrubbing center outer IPv4"
   XC_C1_OUTER_V6:
     default: "2001:db8:100::1"
-    description: "F5 XC primary scrubbing center outer IPv6"
+    description: "F5 XC Center 1 scrubbing center outer IPv6"
   XC_C2_OUTER_V6:
     default: "2001:db8:100::2"
-    description: "F5 XC secondary scrubbing center outer IPv6"
+    description: "F5 XC Center 2 scrubbing center outer IPv6"
 
   # --- BIG-IP Outer Self IPs (GRE Endpoints) ---
   BIGIP_A_OUTER_V4:

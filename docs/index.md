@@ -23,7 +23,7 @@ flowchart LR
         DROP["Attack Traffic<br/>Dropped"]
     end
 
-    subgraph DC["Customer Data Center"]
+    subgraph DC["xDC_NAMEx Data Center"]
         BIGIP["BIG-IP CPE<br/>(GRE endpoint)"]
         SERVERS["Protected Servers"]
     end
@@ -91,6 +91,9 @@ This guide assumes **Route Domain 0** (the default).
 
 ## Sample topology and addresses
 
+This section shows sample configuration for the **xDC_NAMEx** data center
+connecting to F5 Distributed Cloud scrubbing centers.
+
 !!! note
     **These are example values.** Replace with customer-specific and
     F5-provided values using the tables above.
@@ -114,7 +117,7 @@ flowchart LR
         C2["xCENTER_2x Scrubbing<br/>xXC_C2_OUTER_V4x"]
     end
 
-    subgraph DC["Customer Data Center"]
+    subgraph DC["xDC_NAMEx Data Center"]
         BIGIPA["BIG-IP-A<br/>xBIGIP_A_OUTER_V4x"]
         BIGIPB["BIG-IP-B<br/>xBIGIP_B_OUTER_V4x"]
         NET["Protected Network<br/>xPROTECTED_PREFIX_V4x<br/>xPROTECTED_PREFIX_V6x"]
@@ -234,7 +237,7 @@ flowchart LR
         C2["xCENTER_2x<br/>xXC_C2_OUTER_V4x<br/>xXC_C2_OUTER_V6x"]
     end
 
-    subgraph DC["Customer Data Center"]
+    subgraph DC["xDC_NAMEx Data Center"]
         subgraph BIGIPA["BIG-IP-A<br/>xBIGIP_A_OUTER_V4x<br/>xBIGIP_A_OUTER_V6x"]
             T1_INNER["C1-T1 Inner<br/>xBIGIP_C1_T1_INNER_V4x<br/>xBIGIP_C1_T1_INNER_V6x"]
             T2_INNER["C2-T1 Inner<br/>xBIGIP_C2_T1_INNER_V4x<br/>xBIGIP_C2_T1_INNER_V6x"]
@@ -909,7 +912,7 @@ flowchart LR
         C2["xCENTER_2x scrubbing center"]
     end
 
-    subgraph DC["Customer Data Center"]
+    subgraph DC["xDC_NAMEx Data Center"]
         direction TB
         subgraph UNITA["BIG-IP-A (Active)"]
             A_C1["C1-T1 tunnel<br/>BGP Established"]
