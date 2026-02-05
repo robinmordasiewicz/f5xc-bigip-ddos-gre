@@ -178,7 +178,7 @@ flowchart LR
     [RFC 6164][rfc6164] to avoid neighbor-discovery exhaustion. Use /127
     if your F5 SOC tunnel assignment supports it.
 
-## Customer Equipment / BIG-IP sample
+## Customer Equipment - BIG-IP
 
 **BIG-IP-A** (outer IP `xBIGIP_A_OUTER_V4x` / `xBIGIP_A_OUTER_V6x`):
 

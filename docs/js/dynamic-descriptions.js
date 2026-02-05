@@ -633,3 +633,51 @@
     init();
   }
 })();
+
+/**
+ * TOC Collapsible Sections
+ * Adds click-to-expand/collapse functionality to TOC items with nested children
+ */
+(function() {
+  'use strict';
+
+  function initTocCollapse() {
+    var tocNav = document.querySelector('.md-nav--secondary');
+    if (!tocNav) return;
+
+    // Find all TOC items that have nested children
+    var parentItems = tocNav.querySelectorAll('.md-nav__item');
+
+    parentItems.forEach(function(item) {
+      var nestedNav = item.querySelector(':scope > .md-nav');
+      if (!nestedNav) return;
+
+      var link = item.querySelector(':scope > .md-nav__link');
+      if (!link) return;
+
+      // Set initial expanded state and measure height
+      nestedNav.style.maxHeight = nestedNav.scrollHeight + 'px';
+
+      // Add click handler to toggle collapse
+      link.addEventListener('click', function(e) {
+        // Only toggle if clicking on the link itself, not navigating
+        // Allow navigation but also toggle
+        item.classList.toggle('toc-collapsed');
+
+        if (item.classList.contains('toc-collapsed')) {
+          nestedNav.style.maxHeight = '0';
+        } else {
+          nestedNav.style.maxHeight = nestedNav.scrollHeight + 'px';
+        }
+      });
+    });
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTocCollapse);
+  } else {
+    // Small delay to ensure Material theme has rendered
+    setTimeout(initTocCollapse, 100);
+  }
+})();

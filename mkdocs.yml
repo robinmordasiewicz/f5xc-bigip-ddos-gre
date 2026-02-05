@@ -23,8 +23,9 @@ theme:
         name: Switch to dark mode
   features:
     - content.code.copy
-    - navigation.sections
     - navigation.top
+    - navigation.expand
+    - toc.follow
     - toc.integrate
 
 extra_css:
@@ -56,4 +57,6 @@ markdown_extensions:
   - md_in_html
   - tables
   - toc:
-      toc_depth: 3
+      toc_depth: 4
+      permalink: true
+      permalink_title: Link to this section

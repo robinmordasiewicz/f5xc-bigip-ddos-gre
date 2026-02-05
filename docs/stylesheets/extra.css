@@ -46,3 +46,121 @@
 .md-nav--primary > .md-nav__title {
   display: none;
 }
+
+/* ============================================
+   Enhanced TOC Styling with Collapsible Sections
+   ============================================ */
+
+/* TOC container improvements */
+.md-nav--secondary {
+  border-left: 2px solid var(--md-primary-fg-color--light);
+}
+
+/* Style all TOC items */
+.md-nav--secondary .md-nav__item {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Style links */
+.md-nav--secondary .md-nav__link {
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  font-size: 0.75rem;
+}
+
+/* Hover effect */
+.md-nav--secondary .md-nav__link:hover {
+  background-color: var(--md-accent-fg-color--transparent);
+  color: var(--md-accent-fg-color);
+}
+
+/* Active section highlighting */
+.md-nav--secondary .md-nav__link--active {
+  background-color: var(--md-primary-fg-color--light);
+  color: var(--md-primary-bg-color);
+  font-weight: 600;
+}
+
+/* Section header styling (h2 level - top level TOC items) */
+.md-nav--secondary > .md-nav__list > .md-nav__item > .md-nav__link {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--md-primary-fg-color);
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  margin-bottom: 0.3rem;
+}
+
+/* Parent items with children - add expand indicator */
+.md-nav--secondary > .md-nav__list > .md-nav__item:has(.md-nav) > .md-nav__link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.md-nav--secondary > .md-nav__list > .md-nav__item:has(.md-nav) > .md-nav__link::after {
+  content: "▾";
+  margin-left: auto;
+  font-size: 0.7rem;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+/* Collapsed state indicator */
+.md-nav--secondary > .md-nav__list > .md-nav__item.toc-collapsed > .md-nav__link::after {
+  content: "▸";
+}
+
+/* Nested nav (h3 items under h2) */
+.md-nav--secondary > .md-nav__list > .md-nav__item > .md-nav {
+  margin-left: 0.6rem;
+  padding-left: 0.6rem;
+  border-left: 1px solid var(--md-default-fg-color--lightest);
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+/* Collapsed nested nav */
+.md-nav--secondary > .md-nav__list > .md-nav__item.toc-collapsed > .md-nav {
+  max-height: 0 !important;
+  opacity: 0;
+}
+
+/* Subsection styling (h3 level) */
+.md-nav--secondary > .md-nav__list > .md-nav__item > .md-nav .md-nav__link {
+  font-weight: 500;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.5rem;
+}
+
+/* Deep section styling (h4 level) */
+.md-nav--secondary > .md-nav__list > .md-nav__item > .md-nav > .md-nav__list > .md-nav__item > .md-nav .md-nav__link {
+  font-size: 0.68rem;
+  opacity: 0.85;
+  padding-left: 0.8rem;
+}
+
+/* Scrollbar styling for TOC */
+.md-nav--secondary::-webkit-scrollbar {
+  width: 4px;
+}
+
+.md-nav--secondary::-webkit-scrollbar-thumb {
+  background-color: var(--md-default-fg-color--lighter);
+  border-radius: 2px;
+}
+
+.md-nav--secondary::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Mobile responsive adjustments */
+@media screen and (max-width: 76.1875em) {
+  .md-nav--secondary .md-nav__link {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+  }
+}
