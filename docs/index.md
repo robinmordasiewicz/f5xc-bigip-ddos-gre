@@ -34,14 +34,6 @@ flowchart LR
     BIGIP --> SERVERS
     SERVERS --> BIGIP
     BIGIP -.->|"return traffic<br/>via ISP uplink<br/>(asymmetric path)"| INET
-
-    style DROP fill:#8E2424,color:#fff,stroke:#C62828
-    style INET fill:#455A64,color:#fff,stroke:#78909C
-    style SCRUB fill:#00838F,color:#fff,stroke:#00ACC1
-    style BIGIP fill:#1565C0,color:#fff,stroke:#42A5F5
-    style SERVERS fill:#37474F,color:#fff,stroke:#78909C
-    style DC fill:#263238,stroke:#78909C,color:#fff
-    style XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 ### Prerequisites
@@ -136,15 +128,6 @@ flowchart LR
     IAD -- "GRE IAD-2" --> BIGIPB
     BIGIPA --> NET
     BIGIPB --> NET
-
-    style INET fill:#455A64,color:#fff,stroke:#78909C
-    style SJC fill:#1565C0,color:#fff,stroke:#42A5F5
-    style IAD fill:#1565C0,color:#fff,stroke:#42A5F5
-    style BIGIPA fill:#00695C,color:#fff,stroke:#26A69A
-    style BIGIPB fill:#BF360C,color:#fff,stroke:#FF8F00
-    style NET fill:#37474F,color:#fff,stroke:#78909C
-    style DC fill:#263238,stroke:#78909C,color:#fff
-    style XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 ### F5 Distributed Cloud (scrubbing center) sample
@@ -272,17 +255,6 @@ flowchart LR
     IAD -. "BGP tcp/179<br/>xXC_IAD1_INNER_V4x &#8594; xBIGIP_IAD1_INNER_V4x" .-> T2_INNER
     SJC -. "BGP tcp/179<br/>xXC_SJC2_INNER_V4x &#8594; xBIGIP_SJC2_INNER_V4x" .-> T3_INNER
     IAD -. "BGP tcp/179<br/>xXC_IAD2_INNER_V4x &#8594; xBIGIP_IAD2_INNER_V4x" .-> T4_INNER
-
-    style SJC fill:#1565C0,color:#fff,stroke:#42A5F5
-    style IAD fill:#1565C0,color:#fff,stroke:#42A5F5
-    style T1_INNER fill:#00695C,color:#fff,stroke:#26A69A
-    style T2_INNER fill:#00695C,color:#fff,stroke:#26A69A
-    style T3_INNER fill:#BF360C,color:#fff,stroke:#FF8F00
-    style T4_INNER fill:#BF360C,color:#fff,stroke:#FF8F00
-    style BIGIPA fill:#1A332D,stroke:#4DB6AC,color:#fff
-    style BIGIPB fill:#33261A,stroke:#FFB74D,color:#fff
-    style DC fill:#263238,stroke:#78909C,color:#fff
-    style XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 ---
@@ -956,18 +928,6 @@ flowchart LR
     IAD -- "GRE IAD-2" --> B_IAD
     UNITA --> SERVERS
     UNITB --> SERVERS
-
-    style SJC fill:#1565C0,color:#fff,stroke:#42A5F5
-    style IAD fill:#1565C0,color:#fff,stroke:#42A5F5
-    style A_SJC fill:#00695C,color:#fff,stroke:#26A69A
-    style A_IAD fill:#00695C,color:#fff,stroke:#26A69A
-    style B_SJC fill:#BF360C,color:#fff,stroke:#FF8F00
-    style B_IAD fill:#BF360C,color:#fff,stroke:#FF8F00
-    style SERVERS fill:#37474F,color:#fff,stroke:#78909C
-    style UNITA fill:#1A332D,stroke:#4DB6AC,color:#fff
-    style UNITB fill:#33261A,stroke:#FFB74D,color:#fff
-    style DC fill:#263238,stroke:#78909C,color:#fff
-    style F5XC fill:#1A2744,stroke:#2196F3,color:#fff
 ```
 
 - **Independent tunnel endpoints**: Each BIG-IP unit has its own

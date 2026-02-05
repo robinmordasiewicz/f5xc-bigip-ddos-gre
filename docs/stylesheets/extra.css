@@ -1,27 +1,43 @@
-/* White canvas for Mermaid diagrams on both themes */
+/*
+ * Force Mermaid default theme rendering regardless of MkDocs color scheme.
+ * This ensures diagrams look identical in both light and dark modes,
+ * matching the exact colors of standalone Mermaid diagrams.
+ *
+ * Extracted from Mermaid default theme SVG output:
+ * - Node fill: #ECECFF (light lavender)
+ * - Node stroke: #9370DB (medium purple)
+ * - Text/labels: #333333 (dark gray)
+ * - Edge stroke: #333333
+ * - Edge label bg: rgba(232,232,232,0.8)
+ * - Cluster fill: #ffffde (cream)
+ * - Cluster stroke: #aaaa33 (olive)
+ */
+
+/* White canvas container for all diagrams */
 .mermaid {
-  background: #fff;
+  background: #ffffff;
   border-radius: 4px;
   padding: 1rem;
 }
 
-/*
- * Force light-theme Mermaid rendering inside the dark (slate) scheme.
- * CSS custom properties pierce shadow DOM, so overriding --md-default-*
- * and --md-mermaid-* on .mermaid makes the shadow-rendered SVG use
- * light colors even when the page is in dark mode.
- */
-[data-md-color-scheme="slate"] .mermaid {
+/* Override Material's Mermaid CSS variables to match exact default theme colors */
+.mermaid {
+  /* Base colors for Material integration */
   --md-default-bg-color: #ffffff;
-  --md-default-fg-color: hsla(0, 0%, 0%, 0.87);
-  --md-default-fg-color--light: hsla(0, 0%, 0%, 0.54);
-  --md-default-fg-color--lighter: hsla(0, 0%, 0%, 0.32);
-  --md-default-fg-color--lightest: hsla(0, 0%, 0%, 0.07);
-  --md-code-fg-color: hsla(0, 0%, 13%, 0.82);
-  --md-code-bg-color: hsla(0, 0%, 96%, 1);
-  --md-mermaid-label-bg-color: #ffffff;
-  --md-mermaid-label-fg-color: hsla(0, 0%, 13%, 0.82);
-  --md-mermaid-edge-color: hsla(0, 0%, 13%, 0.82);
-  --md-mermaid-node-bg-color: #526cfe1a;
-  --md-mermaid-node-fg-color: #526cfe;
+  --md-default-fg-color: #333333;
+  --md-default-fg-color--light: #666666;
+  --md-default-fg-color--lighter: #999999;
+  --md-default-fg-color--lightest: #e8e8e8;
+
+  /* Code colors */
+  --md-code-fg-color: #333333;
+  --md-code-bg-color: #f4f4f4;
+
+  /* Mermaid-specific: exact default theme values */
+  --md-mermaid-font-family: "trebuchet ms", verdana, arial, sans-serif;
+  --md-mermaid-edge-color: #333333;
+  --md-mermaid-node-bg-color: #ECECFF;
+  --md-mermaid-node-fg-color: #9370DB;
+  --md-mermaid-label-bg-color: rgba(232, 232, 232, 0.8);
+  --md-mermaid-label-fg-color: #333333;
 }
