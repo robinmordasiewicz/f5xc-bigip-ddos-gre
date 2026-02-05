@@ -1,4 +1,4 @@
-# F5 Distributed Cloud DDoS Mitigation (Routed Mode) — BIG-IP GRE & BGP
+# F5XC GRE/BGP BIG-IP
 
 ## Purpose
 
@@ -227,7 +227,7 @@ flowchart LR
   - IPv6: `xBIGIP_C2_T2_INNER_V6x/64`
 
 - Protected prefixes (advertised to F5 Distributed Cloud):
-  - IPv4: `xPROTECTED_PREFIX_V4x`
+  - IPv4: `xPROTECTED_NET_V4xxPROTECTED_CIDR_V4x`
   - IPv6: `xPROTECTED_PREFIX_V6x`
 
 ```mermaid

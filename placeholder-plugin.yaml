@@ -129,18 +129,26 @@ placeholders:
     description: "BIG-IP-B Center 2 tunnel 2 inner IPv6"
 
   # --- Protected Prefixes ---
-  PROTECTED_PREFIX_V4:
-    default: "192.0.2.0/24"
-    description: "Protected IPv4 prefix with CIDR (e.g. 192.0.2.0/24)"
-  PROTECTED_PREFIX_V6:
-    default: "2001:db8:abcd::/48"
-    description: "Protected IPv6 prefix with CIDR (e.g. 2001:db8:abcd::/48)"
+  PROTECTED_CIDR_V4:
+    description: "Protected IPv4 prefix length"
+    default: "/24 (256 IPs)"
+    values:
+      "/24 (256 IPs)": "/24"
+      "/23 (512 IPs)": "/23"
+      "/22 (1024 IPs)": "/22"
+      "/21 (2048 IPs)": "/21"
   PROTECTED_NET_V4:
     default: "192.0.2.0"
     description: "Protected IPv4 network address (no mask)"
   PROTECTED_MASK_V4:
     default: "255.255.255.0"
-    description: "Protected IPv4 subnet mask (for ip route commands)"
+    description: "Protected IPv4 subnet mask (auto-computed from prefix length)"
+  PROTECTED_PREFIX_V4:
+    default: "192.0.2.0/24"
+    description: "Protected IPv4 prefix with CIDR (auto-computed)"
+  PROTECTED_PREFIX_V6:
+    default: "2001:db8:abcd::/48"
+    description: "Protected IPv6 prefix with CIDR (e.g. 2001:db8:abcd::/48)"
   PROTECTED_NET_V6:
     default: "2001:db8:abcd::"
     description: "Protected IPv6 network address (no prefix length)"

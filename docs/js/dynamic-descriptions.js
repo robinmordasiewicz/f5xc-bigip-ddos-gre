@@ -22,6 +22,14 @@
   // Track current placeholder values
   var currentValues = {};
 
+  // CIDR prefix length to dotted-decimal netmask mapping
+  var CIDR_TO_NETMASK = {
+    '/24': '255.255.255.0',
+    '/23': '255.255.254.0',
+    '/22': '255.255.252.0',
+    '/21': '255.255.248.0'
+  };
+
   // Flag to track if Mermaid is ready for re-rendering
   var mermaidReady = false;
 
@@ -83,7 +91,7 @@
   // Get the inputs from the placeholder table
   function getInputs() {
     var table = document.querySelector('table');
-    if (!table) return { center1: null, center2: null, dcName: null, allInputs: [] };
+    if (!table) return { center1: null, center2: null, dcName: null, cidrSelect: null, allInputs: [], allSelects: [] };
 
     var selects = table.querySelectorAll('select');
     var textInputs = table.querySelectorAll('input[type="text"], input:not([type])');
@@ -101,11 +109,26 @@
       }
     }
 
+    // Find CIDR select by looking for "prefix length" in description
+    var cidrSelect = null;
+    for (var j = 0; j < selects.length; j++) {
+      var row = selects[j].closest('tr');
+      if (row) {
+        var descCell = row.querySelector('td:first-child');
+        if (descCell && descCell.textContent.toLowerCase().indexOf('prefix length') !== -1) {
+          cidrSelect = selects[j];
+          break;
+        }
+      }
+    }
+
     return {
       center1: selects[0] || null,
       center2: selects[1] || null,
       dcName: dcNameInput,
-      allInputs: Array.from(textInputs)
+      cidrSelect: cidrSelect,
+      allInputs: Array.from(textInputs),
+      allSelects: Array.from(selects)
     };
   }
 
@@ -279,6 +302,13 @@
     values.CENTER_2 = getSelectedValue(inputs.center2);
     values.DC_NAME = getInputValue(inputs.dcName);
 
+    // Get CIDR selection and compute netmask
+    var cidrValue = getSelectedValue(inputs.cidrSelect);
+    if (cidrValue) {
+      values.PROTECTED_CIDR_V4 = cidrValue;
+      values.PROTECTED_MASK_V4 = CIDR_TO_NETMASK[cidrValue] || '255.255.255.0';
+    }
+
     // Track position for XC fields (first = C1, second = C2)
     var xcOuterV4Count = 0;
     var xcOuterV6Count = 0;
@@ -318,14 +348,19 @@
         values.BIGIP_A_OUTER_V6 = value;
       } else if (desc.indexOf('big-ip-b') !== -1 && desc.indexOf('outer') !== -1 && desc.indexOf('ipv6') !== -1) {
         values.BIGIP_B_OUTER_V6 = value;
-      } else if (desc.indexOf('protected') !== -1 && desc.indexOf('ipv4') !== -1 && desc.indexOf('cidr') !== -1) {
-        values.PROTECTED_PREFIX_V4 = value;
+      } else if (desc.indexOf('protected') !== -1 && desc.indexOf('ipv4') !== -1 && desc.indexOf('network address') !== -1) {
+        values.PROTECTED_NET_V4 = value;
       } else if (desc.indexOf('protected') !== -1 && desc.indexOf('ipv6') !== -1 && desc.indexOf('cidr') !== -1) {
         values.PROTECTED_PREFIX_V6 = value;
       } else if (desc.indexOf('data center name') !== -1) {
         values.DC_NAME = value;
       }
     });
+
+    // Build PROTECTED_PREFIX_V4 from network address and CIDR if both exist
+    if (values.PROTECTED_NET_V4 && values.PROTECTED_CIDR_V4) {
+      values.PROTECTED_PREFIX_V4 = values.PROTECTED_NET_V4 + values.PROTECTED_CIDR_V4;
+    }
 
     return values;
   }
@@ -554,6 +589,30 @@
         debouncedUpdateMermaid();
       });
     });
+
+    // Add change listener for CIDR dropdown to auto-update netmask field
+    if (inputs.cidrSelect) {
+      inputs.cidrSelect.addEventListener('change', function() {
+        var cidrValue = getSelectedValue(inputs.cidrSelect);
+        var newMask = CIDR_TO_NETMASK[cidrValue] || '255.255.255.0';
+
+        // Find and update the PROTECTED_MASK_V4 input field
+        inputs.allInputs.forEach(function(input) {
+          var row = input.closest('tr');
+          if (!row) return;
+          var descCell = row.querySelector('td:first-child');
+          if (!descCell) return;
+          var desc = descCell.textContent.trim().toLowerCase();
+          if (desc.indexOf('protected') !== -1 && desc.indexOf('ipv4') !== -1 && desc.indexOf('subnet mask') !== -1) {
+            input.value = newMask;
+            // Trigger input event to ensure any other listeners are notified
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        });
+
+        debouncedUpdateMermaid();
+      });
+    }
 
     // Wait for Mermaid to be ready, then assign stable IDs to diagrams
     waitForMermaid(function() {

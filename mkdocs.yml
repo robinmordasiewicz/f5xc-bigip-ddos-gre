@@ -3,6 +3,9 @@ site_description: >-
   Configure GRE tunnels and BGP peering from a BIG-IP HA pair to
   F5 Distributed Cloud DDoS scrubbing centers in routed mode.
 
+repo_url: https://github.com/robinmordasiewicz/f5xc-bigip-ddos-gre
+edit_uri: edit/main/docs/
+
 theme:
   name: material
   palette:
@@ -22,8 +25,7 @@ theme:
     - content.code.copy
     - navigation.sections
     - navigation.top
-    - search.highlight
-    - search.suggest
+    - toc.integrate
 
 extra_css:
   - stylesheets/extra.css
@@ -32,7 +34,6 @@ extra_javascript:
   - js/dynamic-descriptions.js
 
 plugins:
-  - search
   - placeholder
 
 hooks:
@@ -55,4 +56,4 @@ markdown_extensions:
   - md_in_html
   - tables
   - toc:
-      toc_depth: 3
+      toc_depth: 2
