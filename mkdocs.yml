@@ -28,9 +28,15 @@ theme:
 extra_css:
   - stylesheets/extra.css
 
+extra_javascript:
+  - js/dynamic-descriptions.js
+
 plugins:
   - search
   - placeholder
+
+hooks:
+  - hooks/mermaid_sanitizer.py
 
 markdown_extensions:
   - admonition
