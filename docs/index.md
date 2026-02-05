@@ -1,18 +1,10 @@
 # F5XC GRE/BGP BIG-IP
 
-## Purpose
-
-This guide explains how to:
-
 - Configure **GRE tunnels** and **BGP peering** from a BIG-IP HA pair
   (acting as customer premises equipment, CPE), with independent
   tunnels per unit.
 - Connect to the **F5 Distributed Cloud DDoS Mitigation** scrubbing
   centers in **routed mode** (L3/L4).
-
-If you are **not using BIG-IP for GRE tunnels**, use standard GRE
-setup on your router/CPE, and follow the F5 Distributed Cloud guide
-for tunnel and BGP configuration in the Console.
 
 ```mermaid
 flowchart LR
@@ -38,7 +30,7 @@ flowchart LR
     style SERVERS fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 ```
 
-### Prerequisites
+## Requirements
 
 - F5 Distributed Cloud **L3/L4 Routed DDoS Mitigation** service
   (Always On or Always Available) enabled for your tenant.
@@ -57,39 +49,7 @@ flowchart LR
 
 ---
 
-## Key concepts
-
-### Route domains
-
-A **route domain** is a logical routing table on BIG-IP that:
-
-- Isolates network traffic for a particular application/tenant.
-- Allows re-use of overlapping IP addresses in different route
-  domains.
-- Is identified by a numeric Route Domain ID (for example, 0, 1) and
-  referenced as `IP%ID`.
-
-This guide assumes **Route Domain 0** (the default).
-
-### VLANs and tunnels
-
-- You can assign one or more **VLANs** or **tunnels** to a route
-  domain.
-- Each VLAN/tunnel can belong to **only one** route domain.
-- GRE tunnels used for F5 Distributed Cloud are treated like VLAN
-  objects on BIG-IP.
-
-### Dynamic routing (BGP)
-
-- For each route domain, you can enable dynamic routing protocols
-  such as **BGP**.
-- BGP in this design:
-  - Establishes a peering session between BIG-IP and F5 Distributed
-    Cloud.
-  - Advertises customer prefixes that should be protected.
-  - Receives routes for return (clean) traffic.
-
-### Protected prefix (your public IP block)
+## Protected prefix (your public IP block)
 
 The **protected prefix** is your organization's public IP address block that
 F5 Distributed Cloud defends against DDoS attacks.
@@ -113,9 +73,9 @@ F5 Distributed Cloud defends against DDoS attacks.
 
 ---
 
-## Sample topology and addresses
+## Topology and addresses
 
-This section shows sample configuration for the **xDC_NAMEx** data center
+Configuration for the **xDC_NAMEx** data center
 connecting to F5 Distributed Cloud scrubbing centers.
 
 !!! note
@@ -159,7 +119,7 @@ flowchart LR
     style NET fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 ```
 
-### F5 Distributed Cloud (scrubbing center) sample
+## F5 Distributed Cloud (scrubbing center)
 
 **Tunnel C1-T1 — Center 1 to BIG-IP-A:**
 
@@ -218,7 +178,7 @@ flowchart LR
     [RFC 6164][rfc6164] to avoid neighbor-discovery exhaustion. Use /127
     if your F5 SOC tunnel assignment supports it.
 
-### Customer / BIG-IP sample
+## Customer Equipment / BIG-IP sample
 
 **BIG-IP-A** (outer IP `xBIGIP_A_OUTER_V4x` / `xBIGIP_A_OUTER_V6x`):
 
@@ -288,9 +248,9 @@ flowchart LR
 
 ---
 
-## F5 Distributed Cloud configuration (Console)
+## XC configuration (UI)
 
-This section summarizes the **F5 Distributed Cloud** side, based on
+Use the web interface to configure the **F5 Distributed Cloud** side, based on
 the [L3/L4 Routed DDoS Mitigation][xc-ddos-guide] guide.
 
 ### Enable the DDoS mitigation workspace
@@ -376,7 +336,9 @@ VIPs** let you:
 
 ---
 
-## BIG-IP configuration (Route Domain 0 example)
+## BIG-IP configuration
+
+- (Route Domain 0 example)
 
 All commands below are run in **tmsh** on BIG-IP. Adjust object names
 and IPs as needed.
@@ -385,11 +347,6 @@ For general GRE tunnel configuration on BIG-IP, see
 [Configuring a GRE Tunnel Using BIG-IP][gre-devcentral]. For initial
 routed configuration setup with F5 XC, see [K000147949][k000147949].
 
-!!! tip "Placeholder values"
-    All IPs, ASNs, and passwords below are substituted from the
-    placeholder input table at the top of this page. Edit them there
-    to update every command below.
-
 ### Open tmsh
 
 ```bash
@@ -397,7 +354,7 @@ routed configuration setup with F5 XC, see [K000147949][k000147949].
 root@(bigip)(cfg-sync Standalone)(Active)(/Common)(tmos)#
 ```
 
-### Configure outer self IPs (GRE endpoints)
+### Outer self IPs (GRE endpoints)
 
 These are the IPs on each BIG-IP unit used as **GRE tunnel
 endpoints**, typically on the external VLAN. Each unit has its own
@@ -435,7 +392,7 @@ create net self xc-ddos-v6-self-b \
   address xBIGIP_B_OUTER_V6x/64
 ```
 
-### Create GRE tunnels
+### GRE tunnels
 
 Each tunnel points from a BIG-IP unit to an F5 Distributed Cloud
 scrubbing center endpoint. Create **two tunnels per unit** (one to
@@ -550,7 +507,7 @@ ip access-list extended ALLOW-XC-GRE
     (`xBIGIP_A_OUTER_V4x`) and BIG-IP-B (`xBIGIP_B_OUTER_V4x`)
     outer IPs must be permitted as GRE destinations.
 
-### Configure inner self IPs (BGP peering)
+### Inner self IPs (BGP peering)
 
 Assign inner IP addresses (inside the GRE tunnel) that will form the
 **BGP session** with F5 Distributed Cloud. The `allow-service` must
