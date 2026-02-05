@@ -110,8 +110,8 @@ flowchart LR
     INET["Internet<br/>Inbound Traffic"]
 
     subgraph XC["F5 Distributed Cloud"]
-        SJC["SJC Scrubbing<br/>xXC_SJC_OUTER_V4x"]
-        IAD["IAD Scrubbing<br/>xXC_IAD_OUTER_V4x"]
+        C1["xCENTER_1x Scrubbing<br/>xXC_C1_OUTER_V4x"]
+        C2["xCENTER_2x Scrubbing<br/>xXC_C2_OUTER_V4x"]
     end
 
     subgraph DC["Customer Data Center"]
@@ -120,61 +120,61 @@ flowchart LR
         NET["Protected Network<br/>xPROTECTED_PREFIX_V4x<br/>xPROTECTED_PREFIX_V6x"]
     end
 
-    INET --> SJC
-    INET --> IAD
-    SJC -- "GRE SJC-1" --> BIGIPA
-    IAD -- "GRE IAD-1" --> BIGIPA
-    SJC -- "GRE SJC-2" --> BIGIPB
-    IAD -- "GRE IAD-2" --> BIGIPB
+    INET --> C1
+    INET --> C2
+    C1 -- "GRE C1-T1" --> BIGIPA
+    C2 -- "GRE C2-T1" --> BIGIPA
+    C1 -- "GRE C1-T2" --> BIGIPB
+    C2 -- "GRE C2-T2" --> BIGIPB
     BIGIPA --> NET
     BIGIPB --> NET
 ```
 
 ### F5 Distributed Cloud (scrubbing center) sample
 
-**Tunnel SJC-1 — SJC to BIG-IP-A:**
+**Tunnel C1-T1 — Center 1 to BIG-IP-A:**
 
 - GRE outer IPs (for tunnel endpoints):
-  - IPv4 SRC: `xXC_SJC_OUTER_V4x/24`
+  - IPv4 SRC: `xXC_C1_OUTER_V4x/24`
   - IPv4 DST: `xBIGIP_A_OUTER_V4x/24`
-  - IPv6 SRC: `xXC_SJC_OUTER_V6x/64`
+  - IPv6 SRC: `xXC_C1_OUTER_V6x/64`
   - IPv6 DST: `xBIGIP_A_OUTER_V6x/64`
 - GRE inner IPs (for BGP session):
-  - IPv4: `xXC_SJC1_INNER_V4x/30`
-  - IPv6: `xXC_SJC1_INNER_V6x/64`
+  - IPv4: `xXC_C1_T1_INNER_V4x/30`
+  - IPv6: `xXC_C1_T1_INNER_V6x/64`
 
-**Tunnel SJC-2 — SJC to BIG-IP-B:**
+**Tunnel C1-T2 — Center 1 to BIG-IP-B:**
 
 - GRE outer IPs (for tunnel endpoints):
-  - IPv4 SRC: `xXC_SJC_OUTER_V4x/24`
+  - IPv4 SRC: `xXC_C1_OUTER_V4x/24`
   - IPv4 DST: `xBIGIP_B_OUTER_V4x/24`
-  - IPv6 SRC: `xXC_SJC_OUTER_V6x/64`
+  - IPv6 SRC: `xXC_C1_OUTER_V6x/64`
   - IPv6 DST: `xBIGIP_B_OUTER_V6x/64`
 - GRE inner IPs (for BGP session):
-  - IPv4: `xXC_SJC2_INNER_V4x/30`
-  - IPv6: `xXC_SJC2_INNER_V6x/64`
+  - IPv4: `xXC_C1_T2_INNER_V4x/30`
+  - IPv6: `xXC_C1_T2_INNER_V6x/64`
 
-**Tunnel IAD-1 — IAD to BIG-IP-A:**
+**Tunnel C2-T1 — Center 2 to BIG-IP-A:**
 
 - GRE outer IPs (for tunnel endpoints):
-  - IPv4 SRC: `xXC_IAD_OUTER_V4x/24`
+  - IPv4 SRC: `xXC_C2_OUTER_V4x/24`
   - IPv4 DST: `xBIGIP_A_OUTER_V4x/24`
-  - IPv6 SRC: `xXC_IAD_OUTER_V6x/64`
+  - IPv6 SRC: `xXC_C2_OUTER_V6x/64`
   - IPv6 DST: `xBIGIP_A_OUTER_V6x/64`
 - GRE inner IPs (for BGP session):
-  - IPv4: `xXC_IAD1_INNER_V4x/30`
-  - IPv6: `xXC_IAD1_INNER_V6x/64`
+  - IPv4: `xXC_C2_T1_INNER_V4x/30`
+  - IPv6: `xXC_C2_T1_INNER_V6x/64`
 
-**Tunnel IAD-2 — IAD to BIG-IP-B:**
+**Tunnel C2-T2 — Center 2 to BIG-IP-B:**
 
 - GRE outer IPs (for tunnel endpoints):
-  - IPv4 SRC: `xXC_IAD_OUTER_V4x/24`
+  - IPv4 SRC: `xXC_C2_OUTER_V4x/24`
   - IPv4 DST: `xBIGIP_B_OUTER_V4x/24`
-  - IPv6 SRC: `xXC_IAD_OUTER_V6x/64`
+  - IPv6 SRC: `xXC_C2_OUTER_V6x/64`
   - IPv6 DST: `xBIGIP_B_OUTER_V6x/64`
 - GRE inner IPs (for BGP session):
-  - IPv4: `xXC_IAD2_INNER_V4x/30`
-  - IPv6: `xXC_IAD2_INNER_V6x/64`
+  - IPv4: `xXC_C2_T2_INNER_V4x/30`
+  - IPv6: `xXC_C2_T2_INNER_V6x/64`
 
 !!! info "Inner (transit) IPs"
     Inner IPs such as `10.10.10.0/30` use RFC 1918 addresses. This is
@@ -195,33 +195,33 @@ flowchart LR
 
 - GRE outer IPs:
   - IPv4 SRC: `xBIGIP_A_OUTER_V4x/24`
-  - IPv4 DST (SJC): `xXC_SJC_OUTER_V4x/24`
-  - IPv4 DST (IAD): `xXC_IAD_OUTER_V4x/24`
+  - IPv4 DST (Center 1): `xXC_C1_OUTER_V4x/24`
+  - IPv4 DST (Center 2): `xXC_C2_OUTER_V4x/24`
   - IPv6 SRC: `xBIGIP_A_OUTER_V6x/64`
-  - IPv6 DST (SJC): `xXC_SJC_OUTER_V6x/64`
-  - IPv6 DST (IAD): `xXC_IAD_OUTER_V6x/64`
-- GRE inner IPs — Tunnel SJC-1:
-  - IPv4: `xBIGIP_SJC1_INNER_V4x/30`
-  - IPv6: `xBIGIP_SJC1_INNER_V6x/64`
-- GRE inner IPs — Tunnel IAD-1:
-  - IPv4: `xBIGIP_IAD1_INNER_V4x/30`
-  - IPv6: `xBIGIP_IAD1_INNER_V6x/64`
+  - IPv6 DST (Center 1): `xXC_C1_OUTER_V6x/64`
+  - IPv6 DST (Center 2): `xXC_C2_OUTER_V6x/64`
+- GRE inner IPs — Tunnel C1-T1:
+  - IPv4: `xBIGIP_C1_T1_INNER_V4x/30`
+  - IPv6: `xBIGIP_C1_T1_INNER_V6x/64`
+- GRE inner IPs — Tunnel C2-T1:
+  - IPv4: `xBIGIP_C2_T1_INNER_V4x/30`
+  - IPv6: `xBIGIP_C2_T1_INNER_V6x/64`
 
 **BIG-IP-B** (outer IP `xBIGIP_B_OUTER_V4x` / `xBIGIP_B_OUTER_V6x`):
 
 - GRE outer IPs:
   - IPv4 SRC: `xBIGIP_B_OUTER_V4x/24`
-  - IPv4 DST (SJC): `xXC_SJC_OUTER_V4x/24`
-  - IPv4 DST (IAD): `xXC_IAD_OUTER_V4x/24`
+  - IPv4 DST (Center 1): `xXC_C1_OUTER_V4x/24`
+  - IPv4 DST (Center 2): `xXC_C2_OUTER_V4x/24`
   - IPv6 SRC: `xBIGIP_B_OUTER_V6x/64`
-  - IPv6 DST (SJC): `xXC_SJC_OUTER_V6x/64`
-  - IPv6 DST (IAD): `xXC_IAD_OUTER_V6x/64`
-- GRE inner IPs — Tunnel SJC-2:
-  - IPv4: `xBIGIP_SJC2_INNER_V4x/30`
-  - IPv6: `xBIGIP_SJC2_INNER_V6x/64`
-- GRE inner IPs — Tunnel IAD-2:
-  - IPv4: `xBIGIP_IAD2_INNER_V4x/30`
-  - IPv6: `xBIGIP_IAD2_INNER_V6x/64`
+  - IPv6 DST (Center 1): `xXC_C1_OUTER_V6x/64`
+  - IPv6 DST (Center 2): `xXC_C2_OUTER_V6x/64`
+- GRE inner IPs — Tunnel C1-T2:
+  - IPv4: `xBIGIP_C1_T2_INNER_V4x/30`
+  - IPv6: `xBIGIP_C1_T2_INNER_V6x/64`
+- GRE inner IPs — Tunnel C2-T2:
+  - IPv4: `xBIGIP_C2_T2_INNER_V4x/30`
+  - IPv6: `xBIGIP_C2_T2_INNER_V6x/64`
 
 - Protected prefixes (advertised to F5 Distributed Cloud):
   - IPv4: `xPROTECTED_PREFIX_V4x`
@@ -230,31 +230,31 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph XC["F5 Distributed Cloud"]
-        SJC["SJC<br/>xXC_SJC_OUTER_V4x<br/>xXC_SJC_OUTER_V6x"]
-        IAD["IAD<br/>xXC_IAD_OUTER_V4x<br/>xXC_IAD_OUTER_V6x"]
+        C1["xCENTER_1x<br/>xXC_C1_OUTER_V4x<br/>xXC_C1_OUTER_V6x"]
+        C2["xCENTER_2x<br/>xXC_C2_OUTER_V4x<br/>xXC_C2_OUTER_V6x"]
     end
 
     subgraph DC["Customer Data Center"]
         subgraph BIGIPA["BIG-IP-A<br/>xBIGIP_A_OUTER_V4x<br/>xBIGIP_A_OUTER_V6x"]
-            T1_INNER["SJC-1 Inner<br/>xBIGIP_SJC1_INNER_V4x<br/>xBIGIP_SJC1_INNER_V6x"]
-            T2_INNER["IAD-1 Inner<br/>xBIGIP_IAD1_INNER_V4x<br/>xBIGIP_IAD1_INNER_V6x"]
+            T1_INNER["C1-T1 Inner<br/>xBIGIP_C1_T1_INNER_V4x<br/>xBIGIP_C1_T1_INNER_V6x"]
+            T2_INNER["C2-T1 Inner<br/>xBIGIP_C2_T1_INNER_V4x<br/>xBIGIP_C2_T1_INNER_V6x"]
         end
 
         subgraph BIGIPB["BIG-IP-B<br/>xBIGIP_B_OUTER_V4x<br/>xBIGIP_B_OUTER_V6x"]
-            T3_INNER["SJC-2 Inner<br/>xBIGIP_SJC2_INNER_V4x<br/>xBIGIP_SJC2_INNER_V6x"]
-            T4_INNER["IAD-2 Inner<br/>xBIGIP_IAD2_INNER_V4x<br/>xBIGIP_IAD2_INNER_V6x"]
+            T3_INNER["C1-T2 Inner<br/>xBIGIP_C1_T2_INNER_V4x<br/>xBIGIP_C1_T2_INNER_V6x"]
+            T4_INNER["C2-T2 Inner<br/>xBIGIP_C2_T2_INNER_V4x<br/>xBIGIP_C2_T2_INNER_V6x"]
         end
     end
 
-    SJC == "GRE SJC-1" ==> T1_INNER
-    IAD == "GRE IAD-1" ==> T2_INNER
-    SJC == "GRE SJC-2" ==> T3_INNER
-    IAD == "GRE IAD-2" ==> T4_INNER
+    C1 == "GRE C1-T1" ==> T1_INNER
+    C2 == "GRE C2-T1" ==> T2_INNER
+    C1 == "GRE C1-T2" ==> T3_INNER
+    C2 == "GRE C2-T2" ==> T4_INNER
 
-    SJC -. "BGP tcp/179<br/>xXC_SJC1_INNER_V4x &#8594; xBIGIP_SJC1_INNER_V4x" .-> T1_INNER
-    IAD -. "BGP tcp/179<br/>xXC_IAD1_INNER_V4x &#8594; xBIGIP_IAD1_INNER_V4x" .-> T2_INNER
-    SJC -. "BGP tcp/179<br/>xXC_SJC2_INNER_V4x &#8594; xBIGIP_SJC2_INNER_V4x" .-> T3_INNER
-    IAD -. "BGP tcp/179<br/>xXC_IAD2_INNER_V4x &#8594; xBIGIP_IAD2_INNER_V4x" .-> T4_INNER
+    C1 -. "BGP tcp/179<br/>xXC_C1_T1_INNER_V4x &#8594; xBIGIP_C1_T1_INNER_V4x" .-> T1_INNER
+    C2 -. "BGP tcp/179<br/>xXC_C2_T1_INNER_V4x &#8594; xBIGIP_C2_T1_INNER_V4x" .-> T2_INNER
+    C1 -. "BGP tcp/179<br/>xXC_C1_T2_INNER_V4x &#8594; xBIGIP_C1_T2_INNER_V4x" .-> T3_INNER
+    C2 -. "BGP tcp/179<br/>xXC_C2_T2_INNER_V4x &#8594; xBIGIP_C2_T2_INNER_V4x" .-> T4_INNER
 ```
 
 ---
@@ -413,63 +413,63 @@ scrubbing center endpoint. Create **two tunnels per unit** (one to
 each geo-located scrubbing center) for a total of **four logical
 tunnels** across the HA pair:
 
-**Tunnel SJC-1 — BIG-IP-A to SJC (San Jose):**
+**Tunnel C1-T1 — BIG-IP-A to xCENTER_1x:**
 
 ```shell
-create net tunnels tunnel xc-ddos-sjc1-v4 \
+create net tunnels tunnel xc-ddos-c1t1-v4 \
   local-address xBIGIP_A_OUTER_V4x \
   profile gre \
-  remote-address xXC_SJC_OUTER_V4x
+  remote-address xXC_C1_OUTER_V4x
 
-create net tunnels tunnel xc-ddos-sjc1-v6 \
+create net tunnels tunnel xc-ddos-c1t1-v6 \
   local-address xBIGIP_A_OUTER_V6x \
   profile gre \
-  remote-address xXC_SJC_OUTER_V6x
+  remote-address xXC_C1_OUTER_V6x
 ```
 
-**Tunnel IAD-1 — BIG-IP-A to IAD (Ashburn):**
+**Tunnel C2-T1 — BIG-IP-A to xCENTER_2x:**
 
 ```shell
-create net tunnels tunnel xc-ddos-iad1-v4 \
+create net tunnels tunnel xc-ddos-c2t1-v4 \
   local-address xBIGIP_A_OUTER_V4x \
   profile gre \
-  remote-address xXC_IAD_OUTER_V4x
+  remote-address xXC_C2_OUTER_V4x
 
-create net tunnels tunnel xc-ddos-iad1-v6 \
+create net tunnels tunnel xc-ddos-c2t1-v6 \
   local-address xBIGIP_A_OUTER_V6x \
   profile gre \
-  remote-address xXC_IAD_OUTER_V6x
+  remote-address xXC_C2_OUTER_V6x
 ```
 
-**Tunnel SJC-2 — BIG-IP-B to SJC (San Jose):**
+**Tunnel C1-T2 — BIG-IP-B to xCENTER_1x:**
 
 ```shell
-create net tunnels tunnel xc-ddos-sjc2-v4 \
+create net tunnels tunnel xc-ddos-c1t2-v4 \
   local-address xBIGIP_B_OUTER_V4x \
   profile gre \
-  remote-address xXC_SJC_OUTER_V4x
+  remote-address xXC_C1_OUTER_V4x
 
-create net tunnels tunnel xc-ddos-sjc2-v6 \
+create net tunnels tunnel xc-ddos-c1t2-v6 \
   local-address xBIGIP_B_OUTER_V6x \
   profile gre \
-  remote-address xXC_SJC_OUTER_V6x
+  remote-address xXC_C1_OUTER_V6x
 ```
 
-**Tunnel IAD-2 — BIG-IP-B to IAD (Ashburn):**
+**Tunnel C2-T2 — BIG-IP-B to xCENTER_2x:**
 
 ```shell
-create net tunnels tunnel xc-ddos-iad2-v4 \
+create net tunnels tunnel xc-ddos-c2t2-v4 \
   local-address xBIGIP_B_OUTER_V4x \
   profile gre \
-  remote-address xXC_IAD_OUTER_V4x
+  remote-address xXC_C2_OUTER_V4x
 
-create net tunnels tunnel xc-ddos-iad2-v6 \
+create net tunnels tunnel xc-ddos-c2t2-v6 \
   local-address xBIGIP_B_OUTER_V6x \
   profile gre \
-  remote-address xXC_IAD_OUTER_V6x
+  remote-address xXC_C2_OUTER_V6x
 ```
 
-Tunnel names (`xc-ddos-sjc1-v4`, etc.) are arbitrary; use your own
+Tunnel names (`xc-ddos-c1t1-v4`, etc.) are arbitrary; use your own
 naming convention.
 
 ### Set tunnel MTU
@@ -480,14 +480,14 @@ will fragment or be dropped. Set the tunnel MTU to account for
 encapsulation overhead:
 
 ```shell
-modify net tunnels tunnel xc-ddos-sjc1-v4 mtu 1476
-modify net tunnels tunnel xc-ddos-sjc1-v6 mtu 1456
-modify net tunnels tunnel xc-ddos-sjc2-v4 mtu 1476
-modify net tunnels tunnel xc-ddos-sjc2-v6 mtu 1456
-modify net tunnels tunnel xc-ddos-iad1-v4 mtu 1476
-modify net tunnels tunnel xc-ddos-iad1-v6 mtu 1456
-modify net tunnels tunnel xc-ddos-iad2-v4 mtu 1476
-modify net tunnels tunnel xc-ddos-iad2-v6 mtu 1456
+modify net tunnels tunnel xc-ddos-c1t1-v4 mtu 1476
+modify net tunnels tunnel xc-ddos-c1t1-v6 mtu 1456
+modify net tunnels tunnel xc-ddos-c1t2-v4 mtu 1476
+modify net tunnels tunnel xc-ddos-c1t2-v6 mtu 1456
+modify net tunnels tunnel xc-ddos-c2t1-v4 mtu 1476
+modify net tunnels tunnel xc-ddos-c2t1-v6 mtu 1456
+modify net tunnels tunnel xc-ddos-c2t2-v4 mtu 1476
+modify net tunnels tunnel xc-ddos-c2t2-v6 mtu 1456
 ```
 
 !!! warning "Path MTU"
@@ -507,10 +507,10 @@ only the expected F5 scrubbing-center source IPs:
 ```text
 ! Example upstream router ACL (Cisco IOS style)
 ip access-list extended ALLOW-XC-GRE
-  permit gre host xXC_SJC_OUTER_V4x host xBIGIP_A_OUTER_V4x
-  permit gre host xXC_IAD_OUTER_V4x host xBIGIP_A_OUTER_V4x
-  permit gre host xXC_SJC_OUTER_V4x host xBIGIP_B_OUTER_V4x
-  permit gre host xXC_IAD_OUTER_V4x host xBIGIP_B_OUTER_V4x
+  permit gre host xXC_C1_OUTER_V4x host xBIGIP_A_OUTER_V4x
+  permit gre host xXC_C2_OUTER_V4x host xBIGIP_A_OUTER_V4x
+  permit gre host xXC_C1_OUTER_V4x host xBIGIP_B_OUTER_V4x
+  permit gre host xXC_C2_OUTER_V4x host xBIGIP_B_OUTER_V4x
   deny   gre any host xBIGIP_A_OUTER_V4x log
   deny   gre any host xBIGIP_B_OUTER_V4x log
 ```
@@ -529,68 +529,68 @@ include `tcp:179` (BGP) for the peering session to establish. Adding
 `icmp:any` on the inner self IPs enables PMTUD and reachability
 testing through the tunnel:
 
-**Tunnel SJC-1 — BIG-IP-A to SJC:**
+**Tunnel C1-T1 — BIG-IP-A to xCENTER_1x:**
 
 ```shell
-create net self xc-ddos-sjc1-inner-v4 \
-  vlan xc-ddos-sjc1-v4 \
+create net self xc-ddos-c1t1-inner-v4 \
+  vlan xc-ddos-c1t1-v4 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_SJC1_INNER_V4x/30
+  address xBIGIP_C1_T1_INNER_V4x/30
 
-create net self xc-ddos-sjc1-inner-v6 \
-  vlan xc-ddos-sjc1-v6 \
+create net self xc-ddos-c1t1-inner-v6 \
+  vlan xc-ddos-c1t1-v6 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_SJC1_INNER_V6x/64
+  address xBIGIP_C1_T1_INNER_V6x/64
 ```
 
-**Tunnel IAD-1 — BIG-IP-A to IAD:**
+**Tunnel C2-T1 — BIG-IP-A to xCENTER_2x:**
 
 ```shell
-create net self xc-ddos-iad1-inner-v4 \
-  vlan xc-ddos-iad1-v4 \
+create net self xc-ddos-c2t1-inner-v4 \
+  vlan xc-ddos-c2t1-v4 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_IAD1_INNER_V4x/30
+  address xBIGIP_C2_T1_INNER_V4x/30
 
-create net self xc-ddos-iad1-inner-v6 \
-  vlan xc-ddos-iad1-v6 \
+create net self xc-ddos-c2t1-inner-v6 \
+  vlan xc-ddos-c2t1-v6 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_IAD1_INNER_V6x/64
+  address xBIGIP_C2_T1_INNER_V6x/64
 ```
 
-**Tunnel SJC-2 — BIG-IP-B to SJC:**
+**Tunnel C1-T2 — BIG-IP-B to xCENTER_1x:**
 
 ```shell
-create net self xc-ddos-sjc2-inner-v4 \
-  vlan xc-ddos-sjc2-v4 \
+create net self xc-ddos-c1t2-inner-v4 \
+  vlan xc-ddos-c1t2-v4 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_SJC2_INNER_V4x/30
+  address xBIGIP_C1_T2_INNER_V4x/30
 
-create net self xc-ddos-sjc2-inner-v6 \
-  vlan xc-ddos-sjc2-v6 \
+create net self xc-ddos-c1t2-inner-v6 \
+  vlan xc-ddos-c1t2-v6 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_SJC2_INNER_V6x/64
+  address xBIGIP_C1_T2_INNER_V6x/64
 ```
 
-**Tunnel IAD-2 — BIG-IP-B to IAD:**
+**Tunnel C2-T2 — BIG-IP-B to xCENTER_2x:**
 
 ```shell
-create net self xc-ddos-iad2-inner-v4 \
-  vlan xc-ddos-iad2-v4 \
+create net self xc-ddos-c2t2-inner-v4 \
+  vlan xc-ddos-c2t2-v4 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_IAD2_INNER_V4x/30
+  address xBIGIP_C2_T2_INNER_V4x/30
 
-create net self xc-ddos-iad2-inner-v6 \
-  vlan xc-ddos-iad2-v6 \
+create net self xc-ddos-c2t2-inner-v6 \
+  vlan xc-ddos-c2t2-v6 \
   traffic-group traffic-group-local-only \
   allow-service add { tcp:179 icmp:any } \
-  address xBIGIP_IAD2_INNER_V6x/64
+  address xBIGIP_C2_T2_INNER_V6x/64
 ```
 
 ### Verify dynamic routing (BGP) is licensed
@@ -606,8 +606,8 @@ Use [imish][imish-docs] to configure BGP for Route Domain 0.
     The `imish` BGP configuration is local to each BIG-IP unit. Each
     unit only configures neighbors for its own tunnels:
 
-    - **BIG-IP-A** configures SJC-1 and IAD-1 neighbors.
-    - **BIG-IP-B** configures SJC-2 and IAD-2 neighbors.
+    - **BIG-IP-A** configures C1-T1 and C2-T1 neighbors.
+    - **BIG-IP-B** configures C1-T2 and C2-T2 neighbors.
 
     The `router-id` must be unique per unit (use each unit's own outer
     self IP).
@@ -638,7 +638,7 @@ Use [imish][imish-docs] to configure BGP for Route Domain 0.
     - `xBGP_PASSWORDx` — the agreed BGP MD5 password (or match Console
       "default secret"). Never reuse this password for other services.
 
-**BIG-IP-A** (router-id `xBIGIP_A_OUTER_V4x`, neighbors SJC-1 + IAD-1):
+**BIG-IP-A** (router-id `xBIGIP_A_OUTER_V4x`, neighbors C1-T1 + C2-T1):
 
 ```text
 router bgp xCUSTOMER_ASNx
@@ -663,11 +663,11 @@ router bgp xCUSTOMER_ASNx
   neighbor f5xc prefix-list deny-all in
   neighbor f5xc prefix-list route-to-f5-ipv4 out
 
-  neighbor xXC_SJC1_INNER_V4x peer-group f5xc
-  neighbor xXC_SJC1_INNER_V4x description f5xc-sjc1-v4
+  neighbor xXC_C1_T1_INNER_V4x peer-group f5xc
+  neighbor xXC_C1_T1_INNER_V4x description f5xc-c1-t1-v4
 
-  neighbor xXC_IAD1_INNER_V4x peer-group f5xc
-  neighbor xXC_IAD1_INNER_V4x description f5xc-iad1-v4
+  neighbor xXC_C2_T1_INNER_V4x peer-group f5xc
+  neighbor xXC_C2_T1_INNER_V4x description f5xc-c2-t1-v4
 
   address-family ipv6
     redistribute kernel route-map route-to-f5-ipv6
@@ -676,10 +676,10 @@ router bgp xCUSTOMER_ASNx
     neighbor f5xc capability graceful-restart
     neighbor f5xc prefix-list deny-all6 in
     neighbor f5xc prefix-list route-to-f5-ipv6 out
-    neighbor xXC_SJC1_INNER_V6x peer-group f5xc
-    neighbor xXC_SJC1_INNER_V6x description f5xc-sjc1-v6
-    neighbor xXC_IAD1_INNER_V6x peer-group f5xc
-    neighbor xXC_IAD1_INNER_V6x description f5xc-iad1-v6
+    neighbor xXC_C1_T1_INNER_V6x peer-group f5xc
+    neighbor xXC_C1_T1_INNER_V6x description f5xc-c1-t1-v6
+    neighbor xXC_C2_T1_INNER_V6x peer-group f5xc
+    neighbor xXC_C2_T1_INNER_V6x description f5xc-c2-t1-v6
   exit-address-family
 
 ip prefix-list deny-all deny 0.0.0.0/0 le 32
@@ -700,7 +700,7 @@ route-map route-to-f5-ipv6 permit 10
   set origin igp
 ```
 
-**BIG-IP-B** (router-id `xBIGIP_B_OUTER_V4x`, neighbors SJC-2 + IAD-2):
+**BIG-IP-B** (router-id `xBIGIP_B_OUTER_V4x`, neighbors C1-T2 + C2-T2):
 
 ```text
 router bgp xCUSTOMER_ASNx
@@ -725,11 +725,11 @@ router bgp xCUSTOMER_ASNx
   neighbor f5xc prefix-list deny-all in
   neighbor f5xc prefix-list route-to-f5-ipv4 out
 
-  neighbor xXC_SJC2_INNER_V4x peer-group f5xc
-  neighbor xXC_SJC2_INNER_V4x description f5xc-sjc2-v4
+  neighbor xXC_C1_T2_INNER_V4x peer-group f5xc
+  neighbor xXC_C1_T2_INNER_V4x description f5xc-c1-t2-v4
 
-  neighbor xXC_IAD2_INNER_V4x peer-group f5xc
-  neighbor xXC_IAD2_INNER_V4x description f5xc-iad2-v4
+  neighbor xXC_C2_T2_INNER_V4x peer-group f5xc
+  neighbor xXC_C2_T2_INNER_V4x description f5xc-c2-t2-v4
 
   address-family ipv6
     redistribute kernel route-map route-to-f5-ipv6
@@ -738,10 +738,10 @@ router bgp xCUSTOMER_ASNx
     neighbor f5xc capability graceful-restart
     neighbor f5xc prefix-list deny-all6 in
     neighbor f5xc prefix-list route-to-f5-ipv6 out
-    neighbor xXC_SJC2_INNER_V6x peer-group f5xc
-    neighbor xXC_SJC2_INNER_V6x description f5xc-sjc2-v6
-    neighbor xXC_IAD2_INNER_V6x peer-group f5xc
-    neighbor xXC_IAD2_INNER_V6x description f5xc-iad2-v6
+    neighbor xXC_C1_T2_INNER_V6x peer-group f5xc
+    neighbor xXC_C1_T2_INNER_V6x description f5xc-c1-t2-v6
+    neighbor xXC_C2_T2_INNER_V6x peer-group f5xc
+    neighbor xXC_C2_T2_INNER_V6x description f5xc-c2-t2-v6
   exit-address-family
 
 ip prefix-list deny-all deny 0.0.0.0/0 le 32
@@ -813,15 +813,15 @@ configuration.
 Run on each unit for its own tunnels:
 
 ```shell
-show net tunnels tunnel xc-ddos-sjc1-v4
-show net tunnels tunnel xc-ddos-sjc1-v6
-show net tunnels tunnel xc-ddos-sjc2-v4
-show net tunnels tunnel xc-ddos-sjc2-v6
-show net tunnels tunnel xc-ddos-iad1-v4
-show net tunnels tunnel xc-ddos-iad1-v6
-show net tunnels tunnel xc-ddos-iad2-v4
-show net tunnels tunnel xc-ddos-iad2-v6
-list net tunnels tunnel xc-ddos-sjc1-v4 all-properties
+show net tunnels tunnel xc-ddos-c1t1-v4
+show net tunnels tunnel xc-ddos-c1t1-v6
+show net tunnels tunnel xc-ddos-c1t2-v4
+show net tunnels tunnel xc-ddos-c1t2-v6
+show net tunnels tunnel xc-ddos-c2t1-v4
+show net tunnels tunnel xc-ddos-c2t1-v6
+show net tunnels tunnel xc-ddos-c2t2-v4
+show net tunnels tunnel xc-ddos-c2t2-v6
+list net tunnels tunnel xc-ddos-c1t1-v4 all-properties
 ```
 
 #### Verify self IPs
@@ -836,12 +836,12 @@ From each unit:
 
 ```shell
 # BIG-IP-A tunnels
-ping xXC_SJC1_INNER_V4x source xBIGIP_SJC1_INNER_V4x
-ping xXC_IAD1_INNER_V4x source xBIGIP_IAD1_INNER_V4x
+ping xXC_C1_T1_INNER_V4x source xBIGIP_C1_T1_INNER_V4x
+ping xXC_C2_T1_INNER_V4x source xBIGIP_C2_T1_INNER_V4x
 
 # BIG-IP-B tunnels
-ping xXC_SJC2_INNER_V4x source xBIGIP_SJC2_INNER_V4x
-ping xXC_IAD2_INNER_V4x source xBIGIP_IAD2_INNER_V4x
+ping xXC_C1_T2_INNER_V4x source xBIGIP_C1_T2_INNER_V4x
+ping xXC_C2_T2_INNER_V4x source xBIGIP_C2_T2_INNER_V4x
 ```
 
 #### Verify BGP
@@ -855,16 +855,16 @@ show ip bgp
 show ipv6 bgp
 
 # BIG-IP-A neighbors
-show ip bgp neighbors xXC_SJC1_INNER_V4x
-show ip bgp neighbors xXC_IAD1_INNER_V4x
-show ip bgp neighbors xXC_SJC1_INNER_V4x advertised-routes
-show ip bgp neighbors xXC_SJC1_INNER_V4x received-routes
+show ip bgp neighbors xXC_C1_T1_INNER_V4x
+show ip bgp neighbors xXC_C2_T1_INNER_V4x
+show ip bgp neighbors xXC_C1_T1_INNER_V4x advertised-routes
+show ip bgp neighbors xXC_C1_T1_INNER_V4x received-routes
 
 # BIG-IP-B neighbors
-show ip bgp neighbors xXC_SJC2_INNER_V4x
-show ip bgp neighbors xXC_IAD2_INNER_V4x
-show ip bgp neighbors xXC_SJC2_INNER_V4x advertised-routes
-show ip bgp neighbors xXC_SJC2_INNER_V4x received-routes
+show ip bgp neighbors xXC_C1_T2_INNER_V4x
+show ip bgp neighbors xXC_C2_T2_INNER_V4x
+show ip bgp neighbors xXC_C1_T2_INNER_V4x advertised-routes
+show ip bgp neighbors xXC_C1_T2_INNER_V4x received-routes
 
 show ip route
 show ipv6 route
@@ -905,27 +905,27 @@ scrubbing center:
 ```mermaid
 flowchart LR
     subgraph F5XC["F5 Distributed Cloud"]
-        SJC["SJC scrubbing center"]
-        IAD["IAD scrubbing center"]
+        C1["xCENTER_1x scrubbing center"]
+        C2["xCENTER_2x scrubbing center"]
     end
 
     subgraph DC["Customer Data Center"]
         direction TB
         subgraph UNITA["BIG-IP-A (Active)"]
-            A_SJC["SJC-1 tunnel<br/>BGP Established"]
-            A_IAD["IAD-1 tunnel<br/>BGP Established"]
+            A_C1["C1-T1 tunnel<br/>BGP Established"]
+            A_C2["C2-T1 tunnel<br/>BGP Established"]
         end
         subgraph UNITB["BIG-IP-B (Standby)"]
-            B_SJC["SJC-2 tunnel<br/>Graceful-Restart Ready"]
-            B_IAD["IAD-2 tunnel<br/>Graceful-Restart Ready"]
+            B_C1["C1-T2 tunnel<br/>Graceful-Restart Ready"]
+            B_C2["C2-T2 tunnel<br/>Graceful-Restart Ready"]
         end
         SERVERS["Protected Servers<br/>xPROTECTED_PREFIX_V4x"]
     end
 
-    SJC -- "GRE SJC-1" --> A_SJC
-    IAD -- "GRE IAD-1" --> A_IAD
-    SJC -- "GRE SJC-2" --> B_SJC
-    IAD -- "GRE IAD-2" --> B_IAD
+    C1 -- "GRE C1-T1" --> A_C1
+    C2 -- "GRE C2-T1" --> A_C2
+    C1 -- "GRE C1-T2" --> B_C1
+    C2 -- "GRE C2-T2" --> B_C2
     UNITA --> SERVERS
     UNITB --> SERVERS
 ```
@@ -936,8 +936,8 @@ flowchart LR
   BIG-IP-B uses `xBIGIP_B_OUTER_V4x` as tunnel endpoints. This avoids
   dependence on a floating IP for tunnel sourcing.
 - **Independent BGP sessions**: Each unit runs its own BGP sessions
-  over its own tunnels. BIG-IP-A peers with SJC-1 and IAD-1;
-  BIG-IP-B peers with SJC-2 and IAD-2. On failover the standby
+  over its own tunnels. BIG-IP-A peers with C1-T1 and C2-T1;
+  BIG-IP-B peers with C1-T2 and C2-T2. On failover the standby
   unit's BGP sessions are already established, so F5 Distributed
   Cloud can shift traffic immediately.
 - **Config sync**: Tunnel, self IP, and routing configurations are

@@ -2,19 +2,60 @@ settings:
   replace_delay_millis: -1
 
 placeholders:
+  # --- Scrubbing Center Selection ---
+  CENTER_1:
+    description: "Primary F5 XC DDoS scrubbing center"
+    default: "US West (SJC)"
+    values:
+      "US West (SJC)": "SJC"
+      "US East (DCA)": "DCA"
+      "Toronto (YYZ)": "YYZ"
+      "UK (LON)": "LON"
+      "Germany (FRA)": "FRA"
+      "Paris (CDG)": "CDG"
+      "Asia (SIN)": "SIN"
+      "Bahrain (BAH)": "BAH"
+      "Hong Kong (HKG)": "HKG"
+      "Montreal (YUL)": "YUL"
+      "Mumbai (BOM)": "BOM"
+      "Ohio (CMH)": "CMH"
+      "Sao Paulo (GRU)": "GRU"
+      "Sydney (SYD)": "SYD"
+      "Tokyo (TYO)": "TYO"
+
+  CENTER_2:
+    description: "Secondary F5 XC DDoS scrubbing center"
+    default: "US East (DCA)"
+    values:
+      "US West (SJC)": "SJC"
+      "US East (DCA)": "DCA"
+      "Toronto (YYZ)": "YYZ"
+      "UK (LON)": "LON"
+      "Germany (FRA)": "FRA"
+      "Paris (CDG)": "CDG"
+      "Asia (SIN)": "SIN"
+      "Bahrain (BAH)": "BAH"
+      "Hong Kong (HKG)": "HKG"
+      "Montreal (YUL)": "YUL"
+      "Mumbai (BOM)": "BOM"
+      "Ohio (CMH)": "CMH"
+      "Sao Paulo (GRU)": "GRU"
+      "Sydney (SYD)": "SYD"
+      "Tokyo (TYO)": "TYO"
+
   # --- XC Scrubbing Center Outer IPs ---
-  XC_SJC_OUTER_V4:
+  XC_C1_OUTER_V4:
     default: "198.51.100.10"
-    description: "F5 XC SJC scrubbing center outer IPv4"
-  XC_IAD_OUTER_V4:
+    description: "F5 XC primary scrubbing center outer IPv4"
+  XC_C2_OUTER_V4:
     default: "198.51.100.20"
-    description: "F5 XC IAD scrubbing center outer IPv4"
-  XC_SJC_OUTER_V6:
+    description: "F5 XC secondary scrubbing center outer IPv4"
+  XC_C1_OUTER_V6:
     default: "2001:db8:100::1"
-    description: "F5 XC SJC scrubbing center outer IPv6"
-  XC_IAD_OUTER_V6:
+    description: "F5 XC primary scrubbing center outer IPv6"
+  XC_C2_OUTER_V6:
     default: "2001:db8:100::2"
-    description: "F5 XC IAD scrubbing center outer IPv6"
+    description: "F5 XC secondary scrubbing center outer IPv6"
 
   # --- BIG-IP Outer Self IPs (GRE Endpoints) ---
   BIGIP_A_OUTER_V4:
@@ -31,56 +72,56 @@ placeholders:
     description: "BIG-IP-B outer self IPv6 (GRE endpoint)"
 
   # --- Inner IPs: XC Side ---
-  XC_SJC1_INNER_V4:
+  XC_C1_T1_INNER_V4:
     default: "10.10.10.1"
-    description: "XC SJC-1 tunnel inner IPv4 (XC side)"
-  XC_IAD1_INNER_V4:
+    description: "XC Center 1 tunnel 1 inner IPv4 (XC side)"
+  XC_C2_T1_INNER_V4:
     default: "10.10.10.5"
-    description: "XC IAD-1 tunnel inner IPv4 (XC side)"
-  XC_SJC2_INNER_V4:
+    description: "XC Center 2 tunnel 1 inner IPv4 (XC side)"
+  XC_C1_T2_INNER_V4:
     default: "10.10.10.9"
-    description: "XC SJC-2 tunnel inner IPv4 (XC side)"
-  XC_IAD2_INNER_V4:
+    description: "XC Center 1 tunnel 2 inner IPv4 (XC side)"
+  XC_C2_T2_INNER_V4:
     default: "10.10.10.13"
-    description: "XC IAD-2 tunnel inner IPv4 (XC side)"
-  XC_SJC1_INNER_V6:
+    description: "XC Center 2 tunnel 2 inner IPv4 (XC side)"
+  XC_C1_T1_INNER_V6:
     default: "fd70:b364:3528:2b51::1"
-    description: "XC SJC-1 tunnel inner IPv6 (XC side)"
-  XC_IAD1_INNER_V6:
+    description: "XC Center 1 tunnel 1 inner IPv6 (XC side)"
+  XC_C2_T1_INNER_V6:
     default: "fd70:b364:3528:2b52::1"
-    description: "XC IAD-1 tunnel inner IPv6 (XC side)"
-  XC_SJC2_INNER_V6:
+    description: "XC Center 2 tunnel 1 inner IPv6 (XC side)"
+  XC_C1_T2_INNER_V6:
     default: "fd70:b364:3528:2b53::1"
-    description: "XC SJC-2 tunnel inner IPv6 (XC side)"
-  XC_IAD2_INNER_V6:
+    description: "XC Center 1 tunnel 2 inner IPv6 (XC side)"
+  XC_C2_T2_INNER_V6:
     default: "fd70:b364:3528:2b54::1"
-    description: "XC IAD-2 tunnel inner IPv6 (XC side)"
+    description: "XC Center 2 tunnel 2 inner IPv6 (XC side)"
 
   # --- Inner IPs: BIG-IP Side ---
-  BIGIP_SJC1_INNER_V4:
+  BIGIP_C1_T1_INNER_V4:
     default: "10.10.10.2"
-    description: "BIG-IP-A SJC-1 tunnel inner IPv4"
-  BIGIP_IAD1_INNER_V4:
+    description: "BIG-IP-A Center 1 tunnel 1 inner IPv4"
+  BIGIP_C2_T1_INNER_V4:
     default: "10.10.10.6"
-    description: "BIG-IP-A IAD-1 tunnel inner IPv4"
-  BIGIP_SJC2_INNER_V4:
+    description: "BIG-IP-A Center 2 tunnel 1 inner IPv4"
+  BIGIP_C1_T2_INNER_V4:
     default: "10.10.10.10"
-    description: "BIG-IP-B SJC-2 tunnel inner IPv4"
-  BIGIP_IAD2_INNER_V4:
+    description: "BIG-IP-B Center 1 tunnel 2 inner IPv4"
+  BIGIP_C2_T2_INNER_V4:
     default: "10.10.10.14"
-    description: "BIG-IP-B IAD-2 tunnel inner IPv4"
-  BIGIP_SJC1_INNER_V6:
+    description: "BIG-IP-B Center 2 tunnel 2 inner IPv4"
+  BIGIP_C1_T1_INNER_V6:
     default: "fd70:b364:3528:2b51::2"
-    description: "BIG-IP-A SJC-1 tunnel inner IPv6"
-  BIGIP_IAD1_INNER_V6:
+    description: "BIG-IP-A Center 1 tunnel 1 inner IPv6"
+  BIGIP_C2_T1_INNER_V6:
     default: "fd70:b364:3528:2b52::2"
-    description: "BIG-IP-A IAD-1 tunnel inner IPv6"
-  BIGIP_SJC2_INNER_V6:
+    description: "BIG-IP-A Center 2 tunnel 1 inner IPv6"
+  BIGIP_C1_T2_INNER_V6:
     default: "fd70:b364:3528:2b53::2"
-    description: "BIG-IP-B SJC-2 tunnel inner IPv6"
-  BIGIP_IAD2_INNER_V6:
+    description: "BIG-IP-B Center 1 tunnel 2 inner IPv6"
+  BIGIP_C2_T2_INNER_V6:
     default: "fd70:b364:3528:2b54::2"
-    description: "BIG-IP-B IAD-2 tunnel inner IPv6"
+    description: "BIG-IP-B Center 2 tunnel 2 inner IPv6"
 
   # --- Protected Prefixes ---
   PROTECTED_PREFIX_V4:
