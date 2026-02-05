@@ -128,9 +128,9 @@ placeholders:
     default: "fd70:b364:3528:2b54::2"
     description: "BIG-IP-B Center 2 tunnel 2 inner IPv6"
 
-  # --- Protected Prefixes ---
+  # --- DDoS-Protected Prefixes (Your Public IP Blocks) ---
   PROTECTED_CIDR_V4:
-    description: "Protected IPv4 prefix length"
+    description: "DDoS-protected IPv4 prefix length — your public IP block size"
     default: "/24 (256 IPs)"
     values:
       "/24 (256 IPs)": "/24"
@@ -139,26 +139,26 @@ placeholders:
       "/21 (2048 IPs)": "/21"
   PROTECTED_NET_V4:
     default: "192.0.2.0"
-    description: "Protected IPv4 network address (no mask)"
+    description: "DDoS-protected public IPv4 network (advertised via BGP to F5 XC)"
   PROTECTED_MASK_V4:
     default: "255.255.255.0"
-    description: "Protected IPv4 subnet mask (auto-computed from prefix length)"
+    description: "DDoS-protected IPv4 subnet mask (auto-computed)"
   PROTECTED_PREFIX_V4:
     default: "192.0.2.0/24"
-    description: "Protected IPv4 prefix with CIDR (auto-computed)"
+    description: "DDoS-protected public IPv4 prefix — the IP block F5 XC defends (auto-computed)"
   PROTECTED_PREFIX_V6:
     default: "2001:db8:abcd::/48"
-    description: "Protected IPv6 prefix with CIDR (e.g. 2001:db8:abcd::/48)"
+    description: "DDoS-protected public IPv6 prefix — the IP block F5 XC defends"
   PROTECTED_NET_V6:
     default: "2001:db8:abcd::"
-    description: "Protected IPv6 network address (no prefix length)"
+    description: "DDoS-protected public IPv6 network (advertised via BGP to F5 XC)"
 
   # --- BGP ---
   CUSTOMER_ASN:
-    default: "65000"
+    default: "64496"
     description: "Your public ASN (registered with ARIN/RIR)"
   F5_XC_ASN:
-    default: "64500"
+    default: "35280"
     description: "F5 Distributed Cloud ASN (provided by SOC)"
   BGP_PASSWORD:
     default: "s3cr3t"
