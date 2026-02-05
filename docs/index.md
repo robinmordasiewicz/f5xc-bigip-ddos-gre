@@ -1,5 +1,7 @@
 # F5XC GRE/BGP BIG-IP
 
+## Placeholder Worksheet
+
 - Configure **GRE tunnels** and **BGP peering** from a BIG-IP HA pair
   (acting as customer premises equipment, CPE), with independent
   tunnels per unit.
@@ -49,7 +51,7 @@ flowchart LR
 
 ---
 
-## Protected prefix (your public IP block)
+## Protected prefix (public IP)
 
 The **protected prefix** is your organization's public IP address block that
 F5 Distributed Cloud defends against DDoS attacks.
@@ -118,8 +120,11 @@ flowchart LR
 
     style NET fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 ```
+## Worksheets
 
-## F5 Distributed Cloud (scrubbing center)
+Use the following XC and BIGIP-IP worksheets as reference when building the tunnel configuration.
+
+### XC Worksheet
 
 **Tunnel C1-T1 — Center 1 to BIG-IP-A:**
 
@@ -178,7 +183,7 @@ flowchart LR
     [RFC 6164][rfc6164] to avoid neighbor-discovery exhaustion. Use /127
     if your F5 SOC tunnel assignment supports it.
 
-## Customer Equipment - BIG-IP
+### BIG-IP Worksheet
 
 **BIG-IP-A** (outer IP `xBIGIP_A_OUTER_V4x` / `xBIGIP_A_OUTER_V6x`):
 
@@ -247,13 +252,14 @@ flowchart LR
 ```
 
 ---
+## Configs
 
-## XC configuration (UI)
+### XC configuration (UI)
 
 Use the web interface to configure the **F5 Distributed Cloud** side, based on
 the [L3/L4 Routed DDoS Mitigation][xc-ddos-guide] guide.
 
-### Enable the DDoS mitigation workspace
+#### Enable the DDoS mitigation workspace
 
 Before you can configure tunnels and BGP:
 
@@ -280,7 +286,7 @@ Before you can configure tunnels and BGP:
    - Route advertisement options
    - Fast ACLs / firewall policies, as needed
 
-### Configure tunnels in Console
+#### Configure tunnels in Console
 
 1. Log in to the [F5 Distributed Cloud Console][xc-ddos-guide] and
    select **Routed DDoS** from the service selector.
@@ -309,7 +315,7 @@ Before you can configure tunnels and BGP:
 F5 SOC may pre-create these tunnel objects for you; you simply match
 the **endpoint IPs** and BGP settings on BIG-IP.
 
-### Configure ASNs, prefixes, and route advertisements
+#### Configure ASNs, prefixes, and route advertisements
 
 - **ASNs**:
   - **Manage > ASNs > Add ASN**.
@@ -325,7 +331,7 @@ the **endpoint IPs** and BGP settings on BIG-IP.
 These objects control which prefixes are announced via F5's global
 network when the service is active.
 
-### Optional: network firewall, deny lists, and Fast ACLs
+#### Optional: network firewall, deny lists, and Fast ACLs
 
 **Firewall Rules**, **Deny List Rules**, and **Fast ACLs for Internet
 VIPs** let you:
@@ -336,7 +342,7 @@ VIPs** let you:
 
 ---
 
-## BIG-IP configuration
+### BIG-IP configuration
 
 - (Route Domain 0 example)
 
@@ -347,14 +353,14 @@ For general GRE tunnel configuration on BIG-IP, see
 [Configuring a GRE Tunnel Using BIG-IP][gre-devcentral]. For initial
 routed configuration setup with F5 XC, see [K000147949][k000147949].
 
-### Open tmsh
+#### tmsh
 
 ```bash
 [root@bigip:Active]# tmsh
 root@(bigip)(cfg-sync Standalone)(Active)(/Common)(tmos)#
 ```
 
-### Outer self IPs (GRE endpoints)
+#### Outer self IPs (GRE endpoints)
 
 These are the IPs on each BIG-IP unit used as **GRE tunnel
 endpoints**, typically on the external VLAN. Each unit has its own
@@ -392,7 +398,7 @@ create net self xc-ddos-v6-self-b \
   address xBIGIP_B_OUTER_V6x/64
 ```
 
-### GRE tunnels
+#### GRE tunnels
 
 Each tunnel points from a BIG-IP unit to an F5 Distributed Cloud
 scrubbing center endpoint. Create **two tunnels per unit** (one to
@@ -458,7 +464,7 @@ create net tunnels tunnel xc-ddos-c2t2-v6 \
 Tunnel names (`xc-ddos-c1t1-v4`, etc.) are arbitrary; use your own
 naming convention.
 
-### Set tunnel MTU
+#### Set tunnel MTU
 
 GRE encapsulation adds overhead (24 bytes for IPv4 outer, 44 bytes
 for IPv6 outer). Without an explicit MTU, packets near 1500 bytes
@@ -483,7 +489,7 @@ modify net tunnels tunnel xc-ddos-c2t2-v6 mtu 1456
     is **not** blocked on any intermediate device so that Path MTU
     Discovery (PMTUD) functions correctly.
 
-### GRE anti-spoofing (upstream ACLs)
+#### GRE anti-spoofing (upstream ACLs)
 
 GRE (IP protocol 47) does not provide authentication. Anyone who
 knows the outer IP pair can inject traffic into the tunnel. Apply
@@ -579,12 +585,12 @@ create net self xc-ddos-c2t2-inner-v6 \
   address xBIGIP_C2_T2_INNER_V6x/64
 ```
 
-### Verify dynamic routing (BGP) is licensed
+#### Verify (BGP) is licensed
 
 You must have **dynamic routing** licensed on BIG-IP. If you do not
 see BGP options, contact your F5 account team to enable the feature.
 
-### Configure BGP in Route Domain 0
+#### Configure BGP in Route Domain 0
 
 Use [imish][imish-docs] to configure BGP for Route Domain 0.
 
@@ -790,9 +796,9 @@ configuration.
 
 ---
 
-## Validation and troubleshooting
+## Verification
 
-### On BIG-IP
+### BIG-IP
 
 #### Verify tunnels and MTU
 
@@ -871,7 +877,7 @@ show ipv6 route
     7. On each HA unit, verify the unit's own tunnels are up and its
        own BGP neighbors are configured (not the other unit's).
 
-### On F5 Distributed Cloud Console
+### XC Console
 
 Go to **DDoS and Transit Services >
 [DDoS Protection > Visibility][xc-ddos-guide]** to see:
@@ -882,7 +888,7 @@ Go to **DDoS and Transit Services >
 
 ---
 
-## BIG-IP HA pair considerations
+## BIG-IP HA pair
 
 If BIG-IP is deployed as an **active/standby HA pair**, each unit
 gets its own independent GRE tunnels and BGP sessions to every
