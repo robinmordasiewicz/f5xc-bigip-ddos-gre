@@ -1,7 +1,5 @@
 # F5XC GRE/BGP BIG-IP
 
-## Placeholder Worksheet
-
 - Configure **GRE tunnels** and **BGP peering** from a BIG-IP HA pair
   (acting as customer premises equipment, CPE), with independent
   tunnels per unit.
@@ -584,11 +582,6 @@ create net self xc-ddos-c2t2-inner-v6 \
   allow-service add { tcp:179 icmp:any } \
   address xBIGIP_C2_T2_INNER_V6x/64
 ```
-
-#### Verify (BGP) is licensed
-
-You must have **dynamic routing** licensed on BIG-IP. If you do not
-see BGP options, contact your F5 account team to enable the feature.
 
 #### Configure BGP in Route Domain 0
 
