@@ -41,3 +41,8 @@
   --md-mermaid-label-bg-color: rgba(232, 232, 232, 0.8);
   --md-mermaid-label-fg-color: #333333;
 }
+
+/* Hide redundant site title in left sidebar navigation */
+.md-nav--primary > .md-nav__title {
+  display: none;
+}
