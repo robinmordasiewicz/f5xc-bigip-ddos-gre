@@ -25,15 +25,17 @@ flowchart LR
 
     subgraph DC["xDC_NAMEx Data Center"]
         BIGIP["BIG-IP CPE<br/>(GRE endpoint)"]
-        SERVERS["Protected Servers"]
+        SERVERS["DDoS-Protected Servers<br/><i>Your public IP block</i>"]
     end
 
-    INET -->|"all traffic<br/>(attack + legitimate)"| SCRUB
-    SCRUB --> BIGIP
+    INET -->|"all traffic to your<br/>public IPs"| SCRUB
+    SCRUB -->|"clean traffic"| BIGIP
     SCRUB -.->|"malicious traffic"| DROP
     BIGIP --> SERVERS
     SERVERS --> BIGIP
     BIGIP -.->|"return traffic<br/>via ISP uplink<br/>(asymmetric path)"| INET
+
+    style SERVERS fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 ```
 
 ### Prerequisites
@@ -87,6 +89,28 @@ This guide assumes **Route Domain 0** (the default).
   - Advertises customer prefixes that should be protected.
   - Receives routes for return (clean) traffic.
 
+### Protected prefix (your public IP block)
+
+The **protected prefix** is your organization's public IP address block that
+F5 Distributed Cloud defends against DDoS attacks.
+
+| Requirement | IPv4 | IPv6 |
+|-------------|------|------|
+| **Minimum size** | /24 (256 IPs) | /48 |
+| **Routability** | Publicly routable (non-RFC 1918) | Global unicast (non-ULA) |
+| **Registration** | RIR-assigned (ARIN, RIPE, APNIC) | RIR-assigned |
+| **Proof** | LOA or IRR/ROA registration | LOA or IRR/ROA registration |
+
+**Traffic flow:**
+
+1. F5 Distributed Cloud announces your prefix globally via BGP anycast
+2. All Internet traffic destined for your IPs routes through F5 scrubbing centers
+3. Attack traffic is dropped; clean traffic is delivered via GRE tunnels
+
+!!! warning "Not your internal network"
+    The protected prefix is your **public-facing IP space**, not internal
+    RFC 1918 addresses. These are the IPs that external users connect to.
+
 ---
 
 ## Sample topology and addresses
@@ -120,7 +144,7 @@ flowchart LR
     subgraph DC["xDC_NAMEx Data Center"]
         BIGIPA["BIG-IP-A<br/>xBIGIP_A_OUTER_V4x"]
         BIGIPB["BIG-IP-B<br/>xBIGIP_B_OUTER_V4x"]
-        NET["Protected Network<br/>xPROTECTED_PREFIX_V4x<br/>xPROTECTED_PREFIX_V6x"]
+        NET["DDoS-Protected Network<br/>xPROTECTED_PREFIX_V4x<br/>xPROTECTED_PREFIX_V6x<br/><i>Your public IP block</i>"]
     end
 
     INET --> C1
@@ -131,6 +155,8 @@ flowchart LR
     C2 -- "GRE C2-T2" --> BIGIPB
     BIGIPA --> NET
     BIGIPB --> NET
+
+    style NET fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 ```
 
 ### F5 Distributed Cloud (scrubbing center) sample
@@ -922,7 +948,7 @@ flowchart LR
             B_C1["C1-T2 tunnel<br/>Graceful-Restart Ready"]
             B_C2["C2-T2 tunnel<br/>Graceful-Restart Ready"]
         end
-        SERVERS["Protected Servers<br/>xPROTECTED_PREFIX_V4x"]
+        SERVERS["DDoS-Protected Servers<br/>xPROTECTED_PREFIX_V4x<br/><i>Your public IP block</i>"]
     end
 
     C1 -- "GRE C1-T1" --> A_C1
@@ -931,6 +957,8 @@ flowchart LR
     C2 -- "GRE C2-T2" --> B_C2
     UNITA --> SERVERS
     UNITB --> SERVERS
+
+    style SERVERS fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 ```
 
 - **Independent tunnel endpoints**: Each BIG-IP unit has its own
