@@ -47,6 +47,23 @@
   display: none;
 }
 
+/* Reduce sidebar inner padding for more horizontal space */
+.md-sidebar--primary .md-sidebar__inner {
+  padding-left: 0.4rem;
+}
+
+/* Reduce nested nav indentation */
+.md-nav--primary .md-nav__item .md-nav__link {
+  padding-left: 0.4rem;
+}
+
+/* Consistent vertical spacing for all primary nav items */
+.md-nav--primary .md-nav__link {
+  margin-top: 0;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+}
+
 /* ============================================
    Compact Professional TOC Styling
    WCAG 2.1 AA Compliant (4.5:1 contrast ratio)
@@ -59,15 +76,16 @@
 
 /* Collapse/expand indicators - WCAG AA compliant colors (no opacity) */
 .md-nav--secondary > .md-nav__list > .md-nav__item:has(.md-nav) > .md-nav__link::after {
-  content: "▾";
+  content: "▼";
   margin-left: auto;
-  font-size: .6rem;
+  font-size: .7rem;
+  line-height: 1;
   color: var(--md-default-fg-color--light);
   transition: transform .2s ease;
 }
 
 .md-nav--secondary > .md-nav__list > .md-nav__item.toc-collapsed > .md-nav__link::after {
-  content: "▸";
+  content: "▶";
 }
 
 /* Dark mode: boost contrast for collapse indicators to meet WCAG AA */
@@ -94,6 +112,7 @@
 .md-nav--secondary > .md-nav__list > .md-nav__item.toc-collapsed > .md-nav {
   max-height: 0 !important;
   opacity: 0;
+  margin-bottom: 0;
 }
 
 /* ============================================

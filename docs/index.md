@@ -252,7 +252,7 @@ flowchart LR
 ---
 ## Configs
 
-### XC configuration (UI)
+### XC (UI)
 
 Use the web interface to configure the **F5 Distributed Cloud** side, based on
 the [L3/L4 Routed DDoS Mitigation][xc-ddos-guide] guide.
@@ -284,7 +284,7 @@ Before you can configure tunnels and BGP:
    - Route advertisement options
    - Fast ACLs / firewall policies, as needed
 
-#### Configure tunnels
+#### Tunnels
 
 1. Log in to the [F5 Distributed Cloud Console][xc-ddos-guide] and
    select **Routed DDoS** from the service selector.
@@ -313,7 +313,7 @@ Before you can configure tunnels and BGP:
 F5 SOC may pre-create these tunnel objects for you; you simply match
 the **endpoint IPs** and BGP settings on BIG-IP.
 
-#### ASNs prefixes Route Advetisement
+#### ASNs and Route Advertisement
 
 - **ASNs**:
   - **Manage > ASNs > Add ASN**.
@@ -358,7 +358,7 @@ routed configuration setup with F5 XC, see [K000147949][k000147949].
 root@(bigip)(cfg-sync Standalone)(Active)(/Common)(tmos)#
 ```
 
-#### Outer self IPs
+#### Outer Self IPs
 
 GRE endpoints
 
@@ -515,7 +515,7 @@ ip access-list extended ALLOW-XC-GRE
     (`xBIGIP_A_OUTER_V4x`) and BIG-IP-B (`xBIGIP_B_OUTER_V4x`)
     outer IPs must be permitted as GRE destinations.
 
-### Inner self IPs
+#### Inner Self-IPs
 
 (BGP peering)
 
@@ -815,7 +815,7 @@ show net tunnels tunnel xc-ddos-c2t2-v6
 list net tunnels tunnel xc-ddos-c1t1-v4 all-properties
 ```
 
-#### Verify self IPs
+#### Verify
 
 ```shell
 list net self xc-ddos-*
