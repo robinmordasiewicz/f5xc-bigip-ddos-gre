@@ -68,7 +68,7 @@ flowchart LR
             B_C1["C1-T2 tunnel<br/>Graceful-Restart Ready"]
             B_C2["C2-T2 tunnel<br/>Graceful-Restart Ready"]
         end
-        SERVERS["DDoS-Protected Servers<br/>xPROTECTED_PREFIX_V4x"]
+        SERVERS["DDoS-Protected Servers"]
     end
 
     C1 -- "GRE C1-T1" --> A_C1
