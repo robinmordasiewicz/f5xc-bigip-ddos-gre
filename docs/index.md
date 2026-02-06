@@ -35,15 +35,15 @@ flowchart LR
 - F5 Distributed Cloud **L3/L4 Routed DDoS Mitigation** service
   (Always On or Always Available) enabled for your tenant.
 - BIG-IP with:
-  - LTM (or equivalent networking modules).
-  - **Dynamic routing (BGP)** licensed and enabled.
+    - LTM (or equivalent networking modules).
+    - **Dynamic routing (BGP)** licensed and enabled.
 - Routed mode: at least one **publicly advertised /24 (or shorter)**
   prefix for protection (IPv6 minimum is **/48**).
-  - Protected prefixes **must be publicly routable** (non-RFC 1918).
-    GRE outer endpoints must also be publicly routable when tunnels
-    traverse the public Internet; deployments using private
-    connectivity (L2, private peering) may use RFC 1918 endpoint
-    addresses.
+    - Protected prefixes **must be publicly routable** (non-RFC 1918).
+     GRE outer endpoints must also be publicly routable when tunnels
+     traverse the public Internet; deployments using private
+     connectivity (L2, private peering) may use RFC 1918 endpoint
+     addresses.
 - Connectivity between your data center/router and the F5 Distributed
   Cloud scrubbing center(s).
 
@@ -185,50 +185,50 @@ Use the following XC and BIGIP-IP worksheets as reference when building the tunn
 **Tunnel C1-T1 — Center 1 to BIG-IP-A:**
 
 - GRE outer IPs (for tunnel endpoints):
-   - IPv4 SRC: `xXC_C1_OUTER_V4x/24`
-   - IPv4 DST: `xBIGIP_A_OUTER_V4x/24`
-   - IPv6 SRC: `xXC_C1_OUTER_V6x/64`
-   - IPv6 DST: `xBIGIP_A_OUTER_V6x/64`
+    - IPv4 SRC: `xXC_C1_OUTER_V4x/24`
+    - IPv4 DST: `xBIGIP_A_OUTER_V4x/24`
+    - IPv6 SRC: `xXC_C1_OUTER_V6x/64`
+    - IPv6 DST: `xBIGIP_A_OUTER_V6x/64`
 
 - GRE inner IPs (for BGP session):
-  - IPv4: `xXC_C1_T1_INNER_V4x/30`
-  - IPv6: `xXC_C1_T1_INNER_V6x/64`
+    - IPv4: `xXC_C1_T1_INNER_V4x/30`
+    - IPv6: `xXC_C1_T1_INNER_V6x/64`
 
 **Tunnel C1-T2 — Center 1 to BIG-IP-B:**
 
 - GRE outer IPs (for tunnel endpoints):
-   - IPv4 SRC: `xXC_C1_OUTER_V4x/24`
-   - IPv4 DST: `xBIGIP_B_OUTER_V4x/24`
-   - IPv6 SRC: `xXC_C1_OUTER_V6x/64`
-   - IPv6 DST: `xBIGIP_B_OUTER_V6x/64`
+    - IPv4 SRC: `xXC_C1_OUTER_V4x/24`
+    - IPv4 DST: `xBIGIP_B_OUTER_V4x/24`
+    - IPv6 SRC: `xXC_C1_OUTER_V6x/64`
+    - IPv6 DST: `xBIGIP_B_OUTER_V6x/64`
 
 - GRE inner IPs (for BGP session):
-   - IPv4: `xXC_C1_T2_INNER_V4x/30`
-   - IPv6: `xXC_C1_T2_INNER_V6x/64`
+    - IPv4: `xXC_C1_T2_INNER_V4x/30`
+    - IPv6: `xXC_C1_T2_INNER_V6x/64`
 
 **Tunnel C2-T1 — Center 2 to BIG-IP-A:**
 
 - GRE outer IPs (for tunnel endpoints):
-   - IPv4 SRC: `xXC_C2_OUTER_V4x/24`
-   - IPv4 DST: `xBIGIP_A_OUTER_V4x/24`
-   - IPv6 SRC: `xXC_C2_OUTER_V6x/64`
-   - IPv6 DST: `xBIGIP_A_OUTER_V6x/64`
+    - IPv4 SRC: `xXC_C2_OUTER_V4x/24`
+    - IPv4 DST: `xBIGIP_A_OUTER_V4x/24`
+    - IPv6 SRC: `xXC_C2_OUTER_V6x/64`
+    - IPv6 DST: `xBIGIP_A_OUTER_V6x/64`
 
 - GRE inner IPs (for BGP session):
-   - IPv4: `xXC_C2_T1_INNER_V4x/30`
-   - IPv6: `xXC_C2_T1_INNER_V6x/64`
+    - IPv4: `xXC_C2_T1_INNER_V4x/30`
+    - IPv6: `xXC_C2_T1_INNER_V6x/64`
 
 **Tunnel C2-T2 — Center 2 to BIG-IP-B:**
 
 - GRE outer IPs (for tunnel endpoints):
-   - IPv4 SRC: `xXC_C2_OUTER_V4x/24`
-   - IPv4 DST: `xBIGIP_B_OUTER_V4x/24`
-   - IPv6 SRC: `xXC_C2_OUTER_V6x/64`
-   - IPv6 DST: `xBIGIP_B_OUTER_V6x/64`
+    - IPv4 SRC: `xXC_C2_OUTER_V4x/24`
+    - IPv4 DST: `xBIGIP_B_OUTER_V4x/24`
+    - IPv6 SRC: `xXC_C2_OUTER_V6x/64`
+    - IPv6 DST: `xBIGIP_B_OUTER_V6x/64`
 
 - GRE inner IPs (for BGP session):
-   - IPv4: `xXC_C2_T2_INNER_V4x/30`
-   - IPv6: `xXC_C2_T2_INNER_V6x/64`
+    - IPv4: `xXC_C2_T2_INNER_V4x/30`
+    - IPv6: `xXC_C2_T2_INNER_V6x/64`
 
 !!! info "Inner (transit) IPs"
     Inner IPs such as `10.10.10.0/30` use RFC 1918 addresses. This is
@@ -248,42 +248,42 @@ Use the following XC and BIGIP-IP worksheets as reference when building the tunn
 **BIG-IP-A** (outer IP `xBIGIP_A_OUTER_V4x` / `xBIGIP_A_OUTER_V6x`):
 
 - GRE outer IPs:
-   - IPv4 SRC: `xBIGIP_A_OUTER_V4x/24`
-   - IPv4 DST (Center 1): `xXC_C1_OUTER_V4x/24`
-   - IPv4 DST (Center 2): `xXC_C2_OUTER_V4x/24`
-   - IPv6 SRC: `xBIGIP_A_OUTER_V6x/64`
-   - IPv6 DST (Center 1): `xXC_C1_OUTER_V6x/64`
-   - IPv6 DST (Center 2): `xXC_C2_OUTER_V6x/64`
+    - IPv4 SRC: `xBIGIP_A_OUTER_V4x/24`
+    - IPv4 DST (Center 1): `xXC_C1_OUTER_V4x/24`
+    - IPv4 DST (Center 2): `xXC_C2_OUTER_V4x/24`
+    - IPv6 SRC: `xBIGIP_A_OUTER_V6x/64`
+    - IPv6 DST (Center 1): `xXC_C1_OUTER_V6x/64`
+    - IPv6 DST (Center 2): `xXC_C2_OUTER_V6x/64`
 
 - GRE inner IPs — Tunnel C1-T1:
-   - IPv4: `xBIGIP_C1_T1_INNER_V4x/30`
-   - IPv6: `xBIGIP_C1_T1_INNER_V6x/64`
+    - IPv4: `xBIGIP_C1_T1_INNER_V4x/30`
+    - IPv6: `xBIGIP_C1_T1_INNER_V6x/64`
 
 - GRE inner IPs — Tunnel C2-T1:
-   - IPv4: `xBIGIP_C2_T1_INNER_V4x/30`
-   - IPv6: `xBIGIP_C2_T1_INNER_V6x/64`
+    - IPv4: `xBIGIP_C2_T1_INNER_V4x/30`
+    - IPv6: `xBIGIP_C2_T1_INNER_V6x/64`
 
 **BIG-IP-B** (outer IP `xBIGIP_B_OUTER_V4x` / `xBIGIP_B_OUTER_V6x`):
 
 - GRE outer IPs:
-   - IPv4 SRC: `xBIGIP_B_OUTER_V4x/24`
-   - IPv4 DST (Center 1): `xXC_C1_OUTER_V4x/24`
-   - IPv4 DST (Center 2): `xXC_C2_OUTER_V4x/24`
-   - IPv6 SRC: `xBIGIP_B_OUTER_V6x/64`
-   - IPv6 DST (Center 1): `xXC_C1_OUTER_V6x/64`
-   - IPv6 DST (Center 2): `xXC_C2_OUTER_V6x/64`
+    - IPv4 SRC: `xBIGIP_B_OUTER_V4x/24`
+    - IPv4 DST (Center 1): `xXC_C1_OUTER_V4x/24`
+    - IPv4 DST (Center 2): `xXC_C2_OUTER_V4x/24`
+    - IPv6 SRC: `xBIGIP_B_OUTER_V6x/64`
+    - IPv6 DST (Center 1): `xXC_C1_OUTER_V6x/64`
+    - IPv6 DST (Center 2): `xXC_C2_OUTER_V6x/64`
 
 - GRE inner IPs — Tunnel C1-T2:
-   - IPv4: `xBIGIP_C1_T2_INNER_V4x/30`
-   - IPv6: `xBIGIP_C1_T2_INNER_V6x/64`
+    - IPv4: `xBIGIP_C1_T2_INNER_V4x/30`
+    - IPv6: `xBIGIP_C1_T2_INNER_V6x/64`
 
 - GRE inner IPs — Tunnel C2-T2:
-   - IPv4: `xBIGIP_C2_T2_INNER_V4x/30`
-   - IPv6: `xBIGIP_C2_T2_INNER_V6x/64`
+    - IPv4: `xBIGIP_C2_T2_INNER_V4x/30`
+    - IPv6: `xBIGIP_C2_T2_INNER_V6x/64`
 
 - Protected prefixes (advertised to F5 Distributed Cloud):
-   - IPv4: `xPROTECTED_NET_V4xxPROTECTED_CIDR_V4x`
-   - IPv6: `xPROTECTED_PREFIX_V6x`
+    - IPv4: `xPROTECTED_NET_V4xxPROTECTED_CIDR_V4x`
+    - IPv6: `xPROTECTED_PREFIX_V6x`
 
 ```mermaid
 flowchart LR
@@ -330,17 +330,16 @@ Before you can configure tunnels and BGP:
    or your F5 account team) to:
     - Enable **Routed DDoS Mitigation** workspace for your tenant.
     - Provide:
-       - Your **public IP netblocks** (/24 or shorter for IPv4, /48 or
-         shorter for IPv6) and proof of ownership (or LOA).
-       - Your **ASN** (must be issued by ARIN or equivalent registry).
-       - **IRR** registration (RIPE, ARIN, APNIC, etc.) and **ROA** in
-         RPKI repository.
-       - Desired **clean-traffic return method** (GRE tunnels, Layer 2,
-         private peering via Equinix, etc.).
-       - Data center locations and routers to protect.
-       - **AS-Path prepends** required for route announcements.
-       - Any **BGP communities**, route preferences, or **AS-SET**
-       (optional).
+        - Your **public IP netblocks** (/24 or shorter for IPv4, /48 or
+          shorter for IPv6) and proof of ownership (or LOA).
+        - Your **ASN** (must be issued by ARIN or equivalent registry).
+        - **IRR** registration (RIPE, ARIN, APNIC, etc.) and **ROA** in
+          RPKI repository.
+        - Desired **clean-traffic return method** (GRE tunnels, Layer 2,
+          private peering via Equinix, etc.).
+        - Data center locations and routers to protect.
+        - **AS-Path prepends** required for route announcements.
+        - Any **BGP communities**, route preferences, or **AS-SET**
 
 1. F5 SOC will provision:
     - Tunnels
@@ -357,10 +356,10 @@ Before you can configure tunnels and BGP:
     - **Location Name** and **Availability Zone** (Zone 1 by default).
     - **Bandwidth Max in MB**.
     - **Tunnel Type**:
-       - **GRE Over IPv4** for IPv4 outer tunnel.
-       - **GRE Over IPv6** for IPv6 outer tunnel.
-       - **IP Over IP** for IPv4-in-IPv4 encapsulation.
-       - **IPv6 Over IPv6** for IPv6-in-IPv6 encapsulation.
+        - **GRE Over IPv4** for IPv4 outer tunnel.
+        - **GRE Over IPv6** for IPv6 outer tunnel.
+        - **IP Over IP** for IPv4-in-IPv4 encapsulation.
+        - **IPv6 Over IPv6** for IPv6-in-IPv6 encapsulation.
     - **Customer Endpoint IP**: BIG-IP's external address (outer self
       IP, must be publicly routable when tunnels traverse the public
       Internet).
@@ -380,14 +379,14 @@ the **endpoint IPs** and BGP settings on BIG-IP.
 #### ASNs and Routes
 
 - **ASNs**: -> **Manage > ASNs > Add ASN**.
-   - Enter your ASN and ensure BGP is enabled.
+    - Enter your ASN and ensure BGP is enabled.
 
 - **Prefixes**: -> **Manage > Prefixes > Add Prefix**.
-   - Enter each IP prefix and associate it with your ASN.
+    - Enter each IP prefix and associate it with your ASN.
 
 - **Route Advertisements** -> **Manage > Route Advertisement > Add Route Advertisement**.
-   - Enter prefix, choose **Active** or **Not Advertised**, and
-     optional expiration.
+    - Enter prefix, choose **Active** or **Not Advertised**, and
+      optional expiration.
 
 These objects control which prefixes are announced via F5's global
 network when the service is active.
@@ -550,9 +549,7 @@ modify net tunnels tunnel xc-ddos-c2t2-v6 mtu 1456
     is **not** blocked on any intermediate device so that Path MTU
     Discovery (PMTUD) functions correctly.
 
-#### GRE anti-spoofing
-
-- (upstream ACLs)
+#### GRE anti-spoofing (upstream ACLs)
 
 GRE (IP protocol 47) does not provide authentication. Anyone who
 knows the outer IP pair can inject traffic into the tunnel. Apply
@@ -576,9 +573,7 @@ ip access-list extended ALLOW-XC-GRE
     (`xBIGIP_A_OUTER_V4x`) and BIG-IP-B (`xBIGIP_B_OUTER_V4x`)
     outer IPs must be permitted as GRE destinations.
 
-#### Inner Self-IPs
-
-(BGP peering)
+#### Inner Self-IPs (BGP peering)
 
 Assign inner IP addresses (inside the GRE tunnel) that will form the
 **BGP session** with F5 Distributed Cloud. The `allow-service` must
@@ -925,19 +920,19 @@ show ipv6 route
 
     1. Verify the GRE tunnel is up: `show net tunnels tunnel` should
        show state `up`.
-    2. Confirm `allow-service` includes `tcp:179` on the inner self IP.
-    3. Ping the remote inner IP through the tunnel.
-    4. Check BGP password matches on both sides (common cause of
+    1. Confirm `allow-service` includes `tcp:179` on the inner self IP.
+    1. Ping the remote inner IP through the tunnel.
+    1. Check BGP password matches on both sides (common cause of
        `NOTIFICATION` errors).
-    5. Verify prefix-lists and route-maps are applied correctly.
-    6. Check `show ip bgp neighbors <IP>` for the last error/reset
+    1. Verify prefix-lists and route-maps are applied correctly.
+    1. Check `show ip bgp neighbors <IP>` for the last error/reset
        reason.
-    7. On each HA unit, verify the unit's own tunnels are up and its
+    1. On each HA unit, verify the unit's own tunnels are up and its
        own BGP neighbors are configured (not the other unit's).
 
 ### XC Console
 
-Go to **DDoS and Transit Services >
+Navigate to **DDoS and Transit Services >
 [DDoS Protection > Visibility][xc-ddos-guide]** to see:
 
 - Traffic by network, zone, application.
