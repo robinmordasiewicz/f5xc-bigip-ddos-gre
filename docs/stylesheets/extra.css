@@ -42,6 +42,13 @@
   --md-mermaid-label-fg-color: #333333;
 }
 
+/* F5 Networks official brand red (#E40043) for header/primary color */
+[data-md-color-primary="indigo"] {
+  --md-primary-fg-color: #E40043;
+  --md-primary-fg-color--light: #FF1A5C;
+  --md-primary-fg-color--dark: #B80036;
+}
+
 /* Hide redundant site title in left sidebar navigation */
 .md-nav--primary > .md-nav__title {
   display: none;
@@ -123,13 +130,13 @@
 
 @media screen and (min-width: 60em) {
   .md-sidebar--primary {
-    width: 18rem;
+    width: 16rem;
   }
 }
 
 @media screen and (min-width: 76.25em) {
   .md-sidebar--primary {
-    width: 21rem;
+    width: 17rem;
   }
 
   .md-sidebar--primary ~ .md-content > .md-content__inner {

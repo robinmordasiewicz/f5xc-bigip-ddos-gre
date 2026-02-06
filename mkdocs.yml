@@ -1,4 +1,4 @@
-site_name: F5 XC DDoS Mitigation — BIG-IP GRE & BGP
+site_name: XC DDoS Mitigation — BIG-IP GRE & BGP
 site_description: >-
   Configure GRE tunnels and BGP peering from a BIG-IP HA pair to
   F5 Distributed Cloud DDoS scrubbing centers in routed mode.
@@ -8,6 +8,7 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  logo: assets/f5-logo.svg
   palette:
     - scheme: slate
       primary: indigo
@@ -27,6 +28,24 @@ theme:
     - navigation.expand
     - toc.follow
     - toc.integrate
+
+extra:
+  social:
+    - icon: fontawesome/brands/facebook
+      link: https://www.facebook.com/f5incorporated
+      name: F5 on Facebook
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/F5
+      name: F5 on X
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/f5/
+      name: F5 on LinkedIn
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/f5.global/
+      name: F5 on Instagram
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/user/f5networksinc
+      name: F5 on YouTube
 
 extra_css:
   - stylesheets/extra.css
