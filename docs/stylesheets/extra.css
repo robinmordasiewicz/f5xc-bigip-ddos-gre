@@ -108,6 +108,7 @@
 /* White canvas container for all diagrams */
 .mermaid {
   background: #ffffff;
+  border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 12px;
   padding: 1rem;
   margin: 1.5rem 0;
@@ -227,18 +228,92 @@
 }
 
 /* ============================================
-   Wider Left Sidebar Layout
+   Admonition Styling — elevated shadow matching Mermaid
+   ============================================ */
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 12px;
+  margin: 1.5rem 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+              0 0 60px rgba(137, 220, 235, 0.06);
+}
+
+.md-typeset .admonition-title,
+.md-typeset details summary {
+  border-radius: 12px 12px 0 0;
+}
+
+/* ============================================
+   Table Styling — F5 brand header, zebra stripes, hover
+   Uses :not([class]) to avoid affecting Mermaid / styled tables
+   ============================================ */
+
+/* Header row — F5 brand red background, white bold text */
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: #fff;
+  font-weight: 700;
+  border-bottom: none;
+}
+
+/* Clean single-line bottom borders on cells */
+.md-typeset table:not([class]) td {
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Outer border, rounded corners, and shadow matching Mermaid diagrams */
+.md-typeset table:not([class]) {
+  border: none;
+  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+              0 0 60px rgba(137, 220, 235, 0.06);
+}
+
+/* Alternating row stripes — light gray on even rows */
+.md-typeset table:not([class]) tbody tr:nth-child(2n) {
+  background-color: #f5f5f5;
+}
+
+/* Row hover — subtle F5 red tint */
+.md-typeset table:not([class]) tbody tr:hover {
+  background-color: rgba(228, 0, 67, 0.06);
+}
+
+/* Dark mode (slate) overrides */
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color--dark);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) td {
+  border-bottom-color: hsla(var(--md-hue), 15%, 25%, 1);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:nth-child(2n) {
+  background-color: hsla(var(--md-hue), 15%, 18%, 1);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:hover {
+  background-color: rgba(228, 0, 67, 0.12);
+}
+
+/* ============================================
+   Left Sidebar Layout
    ============================================ */
 
 @media screen and (min-width: 60em) {
   .md-sidebar--primary {
-    width: 16rem;
+    width: 12rem;
   }
 }
 
 @media screen and (min-width: 76.25em) {
   .md-sidebar--primary {
-    width: 17rem;
+    width: 13rem;
   }
 
   .md-sidebar--primary ~ .md-content > .md-content__inner {
