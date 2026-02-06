@@ -257,7 +257,7 @@ flowchart LR
 Use the web interface to configure the **F5 Distributed Cloud** side, based on
 the [L3/L4 Routed DDoS Mitigation][xc-ddos-guide] guide.
 
-#### Enable the DDoS mitigation workspace
+#### Enable DDoS workspace
 
 Before you can configure tunnels and BGP:
 
@@ -284,7 +284,7 @@ Before you can configure tunnels and BGP:
    - Route advertisement options
    - Fast ACLs / firewall policies, as needed
 
-#### Configure tunnels in Console
+#### Configure tunnels
 
 1. Log in to the [F5 Distributed Cloud Console][xc-ddos-guide] and
    select **Routed DDoS** from the service selector.
@@ -313,7 +313,7 @@ Before you can configure tunnels and BGP:
 F5 SOC may pre-create these tunnel objects for you; you simply match
 the **endpoint IPs** and BGP settings on BIG-IP.
 
-#### Configure ASNs, prefixes, and route advertisements
+#### ASNs prefixes Route Advetisement
 
 - **ASNs**:
   - **Manage > ASNs > Add ASN**.
@@ -329,7 +329,7 @@ the **endpoint IPs** and BGP settings on BIG-IP.
 These objects control which prefixes are announced via F5's global
 network when the service is active.
 
-#### Optional: network firewall, deny lists, and Fast ACLs
+####  Network Restriction
 
 **Firewall Rules**, **Deny List Rules**, and **Fast ACLs for Internet
 VIPs** let you:
@@ -340,7 +340,7 @@ VIPs** let you:
 
 ---
 
-### BIG-IP configuration
+### BIG-IP
 
 - (Route Domain 0 example)
 
@@ -358,7 +358,9 @@ routed configuration setup with F5 XC, see [K000147949][k000147949].
 root@(bigip)(cfg-sync Standalone)(Active)(/Common)(tmos)#
 ```
 
-#### Outer self IPs (GRE endpoints)
+#### Outer self IPs
+
+GRE endpoints
 
 These are the IPs on each BIG-IP unit used as **GRE tunnel
 endpoints**, typically on the external VLAN. Each unit has its own
@@ -487,14 +489,16 @@ modify net tunnels tunnel xc-ddos-c2t2-v6 mtu 1456
     is **not** blocked on any intermediate device so that Path MTU
     Discovery (PMTUD) functions correctly.
 
-#### GRE anti-spoofing (upstream ACLs)
+#### GRE anti-spoofing
+
+- (upstream ACLs)
 
 GRE (IP protocol 47) does not provide authentication. Anyone who
 knows the outer IP pair can inject traffic into the tunnel. Apply
 ACLs on the upstream router or firewall to restrict inbound GRE to
 only the expected F5 scrubbing-center source IPs:
 
-```text
+```shell
 ! Example upstream router ACL (Cisco IOS style)
 ip access-list extended ALLOW-XC-GRE
   permit gre host xXC_C1_OUTER_V4x host xBIGIP_A_OUTER_V4x
@@ -511,7 +515,9 @@ ip access-list extended ALLOW-XC-GRE
     (`xBIGIP_A_OUTER_V4x`) and BIG-IP-B (`xBIGIP_B_OUTER_V4x`)
     outer IPs must be permitted as GRE destinations.
 
-### Inner self IPs (BGP peering)
+### Inner self IPs
+
+(BGP peering)
 
 Assign inner IP addresses (inside the GRE tunnel) that will form the
 **BGP session** with F5 Distributed Cloud. The `allow-service` must
@@ -583,7 +589,7 @@ create net self xc-ddos-c2t2-inner-v6 \
   address xBIGIP_C2_T2_INNER_V6x/64
 ```
 
-#### Configure BGP in Route Domain 0
+#### BGP
 
 Use [imish][imish-docs] to configure BGP for Route Domain 0.
 
@@ -605,7 +611,7 @@ Use [imish][imish-docs] to configure BGP for Route Domain 0.
 
 1. Enter privileged and config mode:
 
-   ```text
+   ```shell
    localhost.localdomain[0]> enable
    localhost.localdomain[0]# configure terminal
    ```
@@ -625,7 +631,7 @@ Use [imish][imish-docs] to configure BGP for Route Domain 0.
 
 **BIG-IP-A** (router-id `xBIGIP_A_OUTER_V4x`, neighbors C1-T1 + C2-T1):
 
-```text
+```shell
 router bgp xCUSTOMER_ASNx
   no synchronization
   bgp log-neighbor-changes
@@ -687,7 +693,7 @@ route-map route-to-f5-ipv6 permit 10
 
 **BIG-IP-B** (router-id `xBIGIP_B_OUTER_V4x`, neighbors C1-T2 + C2-T2):
 
-```text
+```shell
 router bgp xCUSTOMER_ASNx
   no synchronization
   bgp log-neighbor-changes
@@ -770,7 +776,7 @@ route-map route-to-f5-ipv6 permit 10
     If your BIG-IP version supports BFD over GRE tunnels, enable it
     for sub-second failure detection:
 
-    ```text
+    ```shell
     neighbor f5xc fall-over bfd
     ```
 
@@ -793,7 +799,7 @@ configuration.
 
 ### BIG-IP
 
-#### Verify tunnels and MTU
+#### Verify tunnels
 
 Run on each unit for its own tunnels:
 
@@ -815,7 +821,7 @@ list net tunnels tunnel xc-ddos-c1t1-v4 all-properties
 list net self xc-ddos-*
 ```
 
-#### Test reachability through the tunnel
+#### Path Check
 
 From each unit:
 
@@ -829,11 +835,11 @@ ping xXC_C1_T2_INNER_V4x source xBIGIP_C1_T2_INNER_V4x
 ping xXC_C2_T2_INNER_V4x source xBIGIP_C2_T2_INNER_V4x
 ```
 
-#### Verify BGP
+#### BGP
 
 In imish on each unit:
 
-```text
+```shell
 show ip bgp summary
 show ipv6 bgp summary
 show ip bgp

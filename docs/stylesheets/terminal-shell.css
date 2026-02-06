@@ -8,21 +8,21 @@
    CSS Variables - Terminal Theme
    ============================================ */
 :root {
-  /* Nord-inspired color palette with Catppuccin warmth */
-  --term-bg-primary: #1e1e2e;
-  --term-bg-secondary: #181825;
-  --term-bg-chrome: #11111b;
-  --term-text: #cdd6f4;
-  --term-text-dim: #6c7086;
-  --term-prompt: #89dceb;
-  --term-command: #f38ba8;
-  --term-flag: #fab387;
-  --term-string: #a6e3a1;
-  --term-comment: #585b70;
-  --term-glow: rgba(137, 220, 235, 0.3);
-  --term-scanline: rgba(255, 255, 255, 0.02);
+  /* Plain white on black color scheme */
+  --term-bg-primary: #000000;
+  --term-bg-secondary: #000000;
+  --term-bg-chrome: #000000;
+  --term-text: #ffffff;
+  --term-text-dim: #ffffff;
+  --term-prompt: #ffffff;
+  --term-command: #ffffff;
+  --term-flag: #ffffff;
+  --term-string: #ffffff;
+  --term-comment: #ffffff;
+  --term-glow: rgba(255, 255, 255, 0);
+  --term-scanline: rgba(255, 255, 255, 0);
 
-  /* Terminal chrome colors */
+  /* Terminal chrome colors - KEEP ORIGINAL */
   --term-red: #f38ba8;
   --term-yellow: #f9e2af;
   --term-green: #a6e3a1;
@@ -31,8 +31,7 @@
   --term-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
                  0 0 80px rgba(137, 220, 235, 0.1);
   --term-border-radius: 12px;
-  --term-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code',
-                     'Roboto Mono', 'SF Mono', monospace;
+  --term-font-mono: 'Courier New', Courier, monospace;
 }
 
 /* ============================================
@@ -46,7 +45,7 @@
   box-shadow: var(--term-shadow);
   overflow: hidden;
   font-family: var(--term-font-mono);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   line-height: 1.4;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -65,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
+  padding: 0.4rem 1rem;
   background: linear-gradient(180deg, var(--term-bg-chrome) 0%, var(--term-bg-secondary) 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   user-select: none;
@@ -278,11 +277,10 @@
 .terminal-prompt-continuation::before {
   content: '';
   animation: none;
-}
-
-.terminal-prompt-continuation {
-  margin-right: 0;
-  width: 1.2em; /* Same width as the chevron for alignment */
+  display: inline-block;
+  width: 0.602em;
+  font-size: 1.2em;
+  height: 1.4em;
 }
 
 @keyframes promptPulse {

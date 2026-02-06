@@ -33,6 +33,56 @@
   };
 
   /**
+   * Language detection patterns with confidence weights
+   */
+  const LANGUAGE_PATTERNS = {
+    tmsh: {
+      weight: 10,
+      patterns: [
+        /\b(create|modify|delete|list|show)\s+(net|ltm)\s+/,
+        /\[root@.*bigip.*\]#/,
+        /\(tmos\)#/,
+        /^\s*tmsh\b/m
+      ]
+    },
+    imish: {
+      weight: 10,
+      patterns: [
+        /router\s+bgp\s+\d+/,
+        /neighbor\s+[\d.a-f:]+/,
+        /address-family\s+(ipv4|ipv6)/,
+        /localhost\.localdomain\[\d+\]>/,
+        /show\s+ip\s+bgp/,
+        /show\s+ipv6\s+bgp/
+      ]
+    },
+    bash: {
+      weight: 5,
+      patterns: [
+        /^\s*#!/,
+        /\b(echo|export|source|alias)\b/,
+        /if\s*\[.*\]\s*then/,
+        /^\$\s+/m,
+        /\bping\s+[\d.]+/,
+        /\bip\s+access-list\b/,
+        /\baccess-list\s+\d+/
+      ]
+    }
+  };
+
+  /**
+   * Display title mapping
+   */
+  const LANGUAGE_TITLES = {
+    'tmsh': 'TMSH',
+    'bash': 'BASH',
+    'sh': 'SH',
+    'zsh': 'ZSH',
+    'imish': 'IMISH',
+    'shell': 'SHELL'
+  };
+
+  /**
    * Apply syntax highlighting by creating DOM elements
    */
   function applySyntaxHighlighting(text, container) {
@@ -124,6 +174,10 @@
     terminal.setAttribute('role', 'region');
     terminal.setAttribute('aria-label', 'Shell command terminal');
 
+    // Detect language from content
+    const detectedLang = detectShellLanguage(code);
+    const displayTitle = getLanguageTitle(detectedLang);
+
     // Create chrome (titlebar)
     const chrome = document.createElement('div');
     chrome.className = 'terminal-chrome';
@@ -133,7 +187,7 @@
         <div class="terminal-control minimize" role="button" aria-label="Minimize" tabindex="0"></div>
         <div class="terminal-control maximize" role="button" aria-label="Maximize" tabindex="0"></div>
       </div>
-      <div class="terminal-title">bash</div>
+      <div class="terminal-title">${displayTitle}</div>
       <button class="terminal-copy" aria-label="Copy to clipboard">Copy</button>
     `;
 
@@ -171,6 +225,9 @@
     // Assemble terminal
     terminal.appendChild(chrome);
     terminal.appendChild(content);
+
+    // Add data attribute for debugging
+    terminal.setAttribute('data-detected-lang', detectedLang);
 
     // Replace original code block
     codeBlock.parentNode.replaceChild(terminal, codeBlock);
@@ -223,38 +280,74 @@
     const text = codeElement.textContent;
     // Check for common shell command patterns
     const shellPatterns = [
-      /\bcreate\s+net\s+/,
-      /\bmodify\s+net\s+/,
-      /\bdelete\s+net\s+/,
-      /\bshow\s+net\s+/,
-      /\blist\s+ltm\s+/,
-      /\bcreate\s+ltm\s+/,
-      /^\s*tmsh\s*$/m,
-      /\[root@.*\]#/
+      /\bcreate\s+(net|ltm)\s+/,
+      /\bmodify\s+(net|ltm)\s+/,
+      /\bdelete\s+(net|ltm)\s+/,
+      /\bshow\s+(net|ip|ipv6)\s+/,
+      /\blist\s+(net|ltm)\s+/,
+      /^\s*tmsh\b/m,
+      /\[root@.*\]#/,
+      /\brouter\s+bgp\s+/,
+      /\bneighbor\s+/,
+      /\baddress-family\s+/,
+      /localhost\.localdomain/,
+      /\bping\s+[\d.]+/,
+      /\bip\s+access-list\b/,
+      /\baccess-list\s+\d+/
     ];
     return shellPatterns.some(pattern => pattern.test(text));
+  }
+
+  /**
+   * Detect shell language from code content
+   */
+  function detectShellLanguage(codeElement) {
+    const content = codeElement.textContent;
+    const scores = {};
+
+    // Calculate confidence scores for each language
+    for (const [lang, config] of Object.entries(LANGUAGE_PATTERNS)) {
+      scores[lang] = 0;
+      for (const pattern of config.patterns) {
+        if (pattern.test(content)) {
+          scores[lang] += config.weight;
+        }
+      }
+    }
+
+    // Find highest scoring language
+    const detected = Object.entries(scores)
+      .sort((a, b) => b[1] - a[1])
+      .filter(([_, score]) => score > 0)[0];
+
+    if (detected && detected[1] >= 5) {
+      return detected[0];
+    }
+
+    return 'shell';  // Default fallback
+  }
+
+  /**
+   * Get display title for language
+   */
+  function getLanguageTitle(lang) {
+    return LANGUAGE_TITLES[lang.toLowerCase()] || 'SHELL';
   }
 
   /**
    * Initialize terminal styling on page load
    */
   function initializeTerminals() {
-    console.log('[Terminal] Initializing terminal styling...');
     // Find all code blocks
     const allCodeBlocks = document.querySelectorAll('pre code');
-    console.log(`[Terminal] Found ${allCodeBlocks.length} code blocks`);
 
-    let transformedCount = 0;
     allCodeBlocks.forEach(codeBlock => {
       const pre = codeBlock.closest('pre');
       // Only transform if it's a shell command block and not already transformed
       if (pre && !pre.classList.contains('terminal-shell') && isShellCodeBlock(codeBlock)) {
-        console.log('[Terminal] Transforming shell code block');
         transformCodeBlock(pre);
-        transformedCount++;
       }
     });
-    console.log(`[Terminal] Transformed ${transformedCount} shell code blocks`);
   }
 
   // Initialize when DOM is ready
