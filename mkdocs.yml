@@ -8,6 +8,9 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  custom_dir: overrides
+  icon:
+    repo: custom/github-mark
   font: false
   logo: assets/f5-logo.svg
   palette:
