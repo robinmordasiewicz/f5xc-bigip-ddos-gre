@@ -108,8 +108,11 @@
 /* White canvas container for all diagrams */
 .mermaid {
   background: #ffffff;
-  border-radius: 4px;
+  border-radius: 12px;
   padding: 1rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+              0 0 60px rgba(137, 220, 235, 0.06);
 }
 
 /* Override Material's Mermaid CSS variables to match exact default theme colors */
@@ -149,8 +152,8 @@
 /* Push page grid closer to left edge */
 .md-grid {
   max-width: 100% !important;
-  margin-left: 0.5rem !important;
-  margin-right: 0.5rem !important;
+  margin-left: 4rem !important;
+  margin-right: 8rem !important;
 }
 
 /* Reduce sidebar inner padding for more horizontal space */
