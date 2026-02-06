@@ -1,0 +1,434 @@
+/**
+ * Retro-Futuristic Terminal Stylesheet
+ * For shell code blocks with sophisticated CLI aesthetics
+ * Inspired by Nord/Catppuccin with CRT charm
+ */
+
+/* ============================================
+   CSS Variables - Terminal Theme
+   ============================================ */
+:root {
+  /* Nord-inspired color palette with Catppuccin warmth */
+  --term-bg-primary: #1e1e2e;
+  --term-bg-secondary: #181825;
+  --term-bg-chrome: #11111b;
+  --term-text: #cdd6f4;
+  --term-text-dim: #6c7086;
+  --term-prompt: #89dceb;
+  --term-command: #f38ba8;
+  --term-flag: #fab387;
+  --term-string: #a6e3a1;
+  --term-comment: #585b70;
+  --term-glow: rgba(137, 220, 235, 0.3);
+  --term-scanline: rgba(255, 255, 255, 0.02);
+
+  /* Terminal chrome colors */
+  --term-red: #f38ba8;
+  --term-yellow: #f9e2af;
+  --term-green: #a6e3a1;
+
+  /* Effects */
+  --term-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                 0 0 80px rgba(137, 220, 235, 0.1);
+  --term-border-radius: 12px;
+  --term-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code',
+                     'Roboto Mono', 'SF Mono', monospace;
+}
+
+/* ============================================
+   Terminal Container
+   ============================================ */
+.terminal-shell {
+  position: relative;
+  margin: 2rem 0;
+  border-radius: var(--term-border-radius);
+  background: var(--term-bg-chrome);
+  box-shadow: var(--term-shadow);
+  overflow: hidden;
+  font-family: var(--term-font-mono);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.terminal-shell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6),
+              0 0 100px rgba(137, 220, 235, 0.15);
+}
+
+/* ============================================
+   Terminal Chrome (Titlebar)
+   ============================================ */
+.terminal-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(180deg, var(--term-bg-chrome) 0%, var(--term-bg-secondary) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  user-select: none;
+}
+
+/* Traffic light controls */
+.terminal-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.terminal-control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: relative;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+}
+
+.terminal-control::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.terminal-control:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.terminal-control:hover::before {
+  opacity: 0.3;
+  background: radial-gradient(circle, currentColor 0%, transparent 70%);
+}
+
+.terminal-control.close {
+  background: var(--term-red);
+  box-shadow: 0 0 6px rgba(243, 139, 168, 0.4);
+}
+
+.terminal-control.minimize {
+  background: var(--term-yellow);
+  box-shadow: 0 0 6px rgba(249, 226, 175, 0.4);
+}
+
+.terminal-control.maximize {
+  background: var(--term-green);
+  box-shadow: 0 0 6px rgba(166, 227, 161, 0.4);
+}
+
+/* Terminal title */
+.terminal-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: var(--term-text-dim);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Copy button */
+.terminal-copy {
+  padding: 0.4rem 0.8rem;
+  background: rgba(137, 220, 235, 0.1);
+  border: 1px solid rgba(137, 220, 235, 0.2);
+  border-radius: 6px;
+  color: var(--term-prompt);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-copy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(137, 220, 235, 0.2) 0%,
+    rgba(137, 220, 235, 0) 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.terminal-copy:hover {
+  background: rgba(137, 220, 235, 0.15);
+  border-color: var(--term-prompt);
+  transform: translateY(-1px);
+}
+
+.terminal-copy:hover::before {
+  opacity: 1;
+}
+
+.terminal-copy:active {
+  transform: scale(0.95);
+}
+
+.terminal-copy.copied {
+  background: rgba(166, 227, 161, 0.15);
+  border-color: var(--term-green);
+  color: var(--term-green);
+}
+
+/* ============================================
+   Terminal Content Area
+   ============================================ */
+.terminal-content {
+  position: relative;
+  padding: 1.5rem;
+  background: var(--term-bg-primary);
+  overflow-x: auto;
+
+  /* CRT scanline effect */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      var(--term-scanline) 2px,
+      var(--term-scanline) 4px
+    );
+
+  /* Subtle glow effect */
+  box-shadow: inset 0 0 100px rgba(137, 220, 235, 0.03);
+}
+
+/* Custom scrollbar */
+.terminal-content::-webkit-scrollbar {
+  height: 8px;
+}
+
+.terminal-content::-webkit-scrollbar-track {
+  background: var(--term-bg-secondary);
+}
+
+.terminal-content::-webkit-scrollbar-thumb {
+  background: var(--term-prompt);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+.terminal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--term-prompt);
+  opacity: 0.8;
+}
+
+/* ============================================
+   Command Lines
+   ============================================ */
+.terminal-line {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.15rem;
+  animation: terminalLineAppear 0.3s ease-out backwards;
+}
+
+.terminal-line:nth-child(1) { animation-delay: 0.05s; }
+.terminal-line:nth-child(2) { animation-delay: 0.1s; }
+.terminal-line:nth-child(3) { animation-delay: 0.15s; }
+.terminal-line:nth-child(4) { animation-delay: 0.2s; }
+.terminal-line:nth-child(5) { animation-delay: 0.25s; }
+.terminal-line:nth-child(n+6) { animation-delay: 0.3s; }
+
+@keyframes terminalLineAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Command prompt */
+.terminal-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 1rem;
+  color: var(--term-prompt);
+  font-weight: 600;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.terminal-prompt::before {
+  content: '❯';
+  font-size: 1.2em;
+  background: linear-gradient(135deg, var(--term-prompt) 0%, var(--term-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: promptPulse 2s ease-in-out infinite;
+}
+
+/* Continuation line prompt (no chevron, just spacing) */
+.terminal-prompt-continuation::before {
+  content: '';
+  animation: none;
+}
+
+.terminal-prompt-continuation {
+  margin-right: 0;
+  width: 1.2em; /* Same width as the chevron for alignment */
+}
+
+@keyframes promptPulse {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px var(--term-glow));
+  }
+  50% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 2px var(--term-glow));
+  }
+}
+
+/* Command text */
+.terminal-command {
+  color: var(--term-text);
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ============================================
+   Syntax Highlighting
+   ============================================ */
+
+/* Command keywords (create, net, tunnels, etc.) */
+.terminal-keyword {
+  color: var(--term-command);
+  font-weight: 600;
+}
+
+/* Flags and options (--flag, -f) */
+.terminal-flag {
+  color: var(--term-flag);
+  font-weight: 500;
+}
+
+/* String values and addresses */
+.terminal-string {
+  color: var(--term-string);
+}
+
+/* Variable placeholders (xVALUEx) */
+.terminal-variable {
+  color: var(--term-prompt);
+  font-style: italic;
+  background: rgba(137, 220, 235, 0.1);
+  padding: 0 0.3rem;
+  border-radius: 3px;
+}
+
+/* Comments */
+.terminal-comment {
+  color: var(--term-comment);
+  font-style: italic;
+}
+
+/* Backslash continuation */
+.terminal-continuation {
+  color: var(--term-text-dim);
+  margin-left: 0.5rem;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+  .terminal-shell {
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+
+  .terminal-chrome {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .terminal-title {
+    display: none;
+  }
+
+  .terminal-content {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .terminal-copy {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.65rem;
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .terminal-shell,
+  .terminal-control,
+  .terminal-copy,
+  .terminal-line {
+    animation: none;
+    transition: none;
+  }
+
+  .terminal-prompt::before {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --term-bg-primary: #000000;
+    --term-text: #ffffff;
+    --term-prompt: #00ffff;
+    --term-command: #ff00ff;
+  }
+
+  .terminal-content {
+    background-image: none;
+  }
+}
+
+/* Focus states for accessibility */
+.terminal-copy:focus-visible {
+  outline: 2px solid var(--term-prompt);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+  .terminal-shell {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .terminal-chrome {
+    display: none;
+  }
+
+  .terminal-content {
+    background-image: none;
+    padding: 1rem;
+  }
+
+  .terminal-line {
+    animation: none;
+  }
+}

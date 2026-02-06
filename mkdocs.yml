@@ -30,9 +30,11 @@ theme:
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/terminal-shell.css
 
 extra_javascript:
   - js/dynamic-descriptions.js
+  - js/terminal-shell.js
 
 plugins:
   - placeholder
