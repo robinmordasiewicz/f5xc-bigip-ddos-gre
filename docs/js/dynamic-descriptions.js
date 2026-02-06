@@ -789,6 +789,7 @@
 
       if (entry.isIntersecting) {
         activeHeadings.add(headingId);
+        collapseSiblings(tocItem);
         expandItem(tocItem);
         expandParentChain(tocItem);
       } else {
@@ -831,6 +832,21 @@
   }
 
   /**
+   * Collapse all sibling sections except the given item (accordion)
+   */
+  function collapseSiblings(item) {
+    var parent = item.parentElement;
+    if (!parent) return;
+
+    var siblings = parent.querySelectorAll(':scope > .md-nav__item');
+    siblings.forEach(function(sibling) {
+      if (sibling !== item && sibling.querySelector(':scope > .md-nav')) {
+        collapseItem(sibling);
+      }
+    });
+  }
+
+  /**
    * Handle manual click toggle
    */
   function handleClickToggle(item, link, nestedNav) {
@@ -840,6 +856,7 @@
 
       // Toggle state
       if (item.classList.contains('toc-collapsed')) {
+        collapseSiblings(item);
         expandItem(item);
       } else {
         collapseItem(item);
