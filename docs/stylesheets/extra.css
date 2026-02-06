@@ -301,6 +301,11 @@
   background-color: rgba(228, 0, 67, 0.12);
 }
 
+/* Hide GitHub stars and forks counts, show only link text */
+.md-source__facts {
+  display: none;
+}
+
 /* ============================================
    Left Sidebar Layout
    ============================================ */
