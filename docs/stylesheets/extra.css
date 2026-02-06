@@ -186,7 +186,7 @@
 }
 
 /* Collapse/expand indicators - WCAG AA compliant colors (no opacity) */
-.md-nav--secondary > .md-nav__list > .md-nav__item:has(.md-nav) > .md-nav__link::after {
+.md-nav--secondary .md-nav__item:has(> .md-nav) > .md-nav__link::after {
   content: "▼";
   margin-left: auto;
   font-size: .7rem;
@@ -195,12 +195,12 @@
   transition: transform .2s ease;
 }
 
-.md-nav--secondary > .md-nav__list > .md-nav__item.toc-collapsed > .md-nav__link::after {
+.md-nav--secondary .md-nav__item.toc-collapsed > .md-nav__link::after {
   content: "▶";
 }
 
 /* Dark mode: boost contrast for collapse indicators to meet WCAG AA */
-[data-md-color-scheme="slate"] .md-nav--secondary > .md-nav__list > .md-nav__item:has(.md-nav) > .md-nav__link::after {
+[data-md-color-scheme="slate"] .md-nav--secondary .md-nav__item:has(> .md-nav) > .md-nav__link::after {
   color: hsla(var(--md-hue), 15%, 90%, 0.7);
 }
 
@@ -215,12 +215,12 @@
 }
 
 /* Nested nav collapse animation */
-.md-nav--secondary > .md-nav__list > .md-nav__item > .md-nav {
+.md-nav--secondary .md-nav__item > .md-nav {
   overflow: hidden;
   transition: max-height .25s ease, opacity .2s ease;
 }
 
-.md-nav--secondary > .md-nav__list > .md-nav__item.toc-collapsed > .md-nav {
+.md-nav--secondary .md-nav__item.toc-collapsed > .md-nav {
   max-height: 0 !important;
   opacity: 0;
   margin-bottom: 0;
@@ -251,7 +251,7 @@
    ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .md-nav--secondary > .md-nav__list > .md-nav__item > .md-nav {
+  .md-nav--secondary .md-nav__item > .md-nav {
     transition: none;
   }
 }

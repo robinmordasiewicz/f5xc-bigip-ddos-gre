@@ -51,16 +51,16 @@ placeholders:
   # --- XC Scrubbing Center Outer IPs ---
   XC_C1_OUTER_V4:
     default: "198.51.100.10"
-    description: "F5 XC Center 1 scrubbing center outer IPv4"
+    description: "F5 XC Scrubbing Center 1 scrubbing center outer IPv4"
   XC_C2_OUTER_V4:
     default: "198.51.100.20"
-    description: "F5 XC Center 2 scrubbing center outer IPv4"
+    description: "F5 XC Scrubbing Center 2 scrubbing center outer IPv4"
   XC_C1_OUTER_V6:
     default: "2001:db8:100::1"
-    description: "F5 XC Center 1 scrubbing center outer IPv6"
+    description: "F5 XC Scrubbing Center 1 scrubbing center outer IPv6"
   XC_C2_OUTER_V6:
     default: "2001:db8:100::2"
-    description: "F5 XC Center 2 scrubbing center outer IPv6"
+    description: "F5 XC Scrubbing Center 2 scrubbing center outer IPv6"
 
   # --- BIG-IP Outer Self IPs (GRE Endpoints) ---
   BIGIP_A_OUTER_V4:
@@ -79,28 +79,28 @@ placeholders:
   # --- Inner IPs: XC Side ---
   XC_C1_T1_INNER_V4:
     default: "10.10.10.1"
-    description: "XC Center 1 tunnel 1 inner IPv4 (XC side)"
+    description: "XC Scrubbing Center 1 tunnel 1 inner IPv4 (XC side)"
   XC_C2_T1_INNER_V4:
     default: "10.10.10.5"
-    description: "XC Center 2 tunnel 1 inner IPv4 (XC side)"
+    description: "XC Scrubbing Center 2 tunnel 1 inner IPv4 (XC side)"
   XC_C1_T2_INNER_V4:
     default: "10.10.10.9"
-    description: "XC Center 1 tunnel 2 inner IPv4 (XC side)"
+    description: "XC Scrubbing Center 1 tunnel 2 inner IPv4 (XC side)"
   XC_C2_T2_INNER_V4:
     default: "10.10.10.13"
-    description: "XC Center 2 tunnel 2 inner IPv4 (XC side)"
+    description: "XC Scrubbing Center 2 tunnel 2 inner IPv4 (XC side)"
   XC_C1_T1_INNER_V6:
     default: "fd70:b364:3528:2b51::1"
-    description: "XC Center 1 tunnel 1 inner IPv6 (XC side)"
+    description: "XC Scrubbing Center 1 tunnel 1 inner IPv6 (XC side)"
   XC_C2_T1_INNER_V6:
     default: "fd70:b364:3528:2b52::1"
-    description: "XC Center 2 tunnel 1 inner IPv6 (XC side)"
+    description: "XC Scrubbing Center 2 tunnel 1 inner IPv6 (XC side)"
   XC_C1_T2_INNER_V6:
     default: "fd70:b364:3528:2b53::1"
-    description: "XC Center 1 tunnel 2 inner IPv6 (XC side)"
+    description: "XC Scrubbing Center 1 tunnel 2 inner IPv6 (XC side)"
   XC_C2_T2_INNER_V6:
     default: "fd70:b364:3528:2b54::1"
-    description: "XC Center 2 tunnel 2 inner IPv6 (XC side)"
+    description: "XC Scrubbing Center 2 tunnel 2 inner IPv6 (XC side)"
 
   # --- Inner IPs: BIG-IP Side ---
   BIGIP_C1_T1_INNER_V4:
