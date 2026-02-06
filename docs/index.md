@@ -313,7 +313,7 @@ Before you can configure tunnels and BGP:
 F5 SOC may pre-create these tunnel objects for you; you simply match
 the **endpoint IPs** and BGP settings on BIG-IP.
 
-#### ASNs and Route Advertisement
+#### ASNs and Routes
 
 - **ASNs**:
   - **Manage > ASNs > Add ASN**.

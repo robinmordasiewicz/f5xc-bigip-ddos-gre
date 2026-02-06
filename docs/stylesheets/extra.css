@@ -49,19 +49,21 @@
 
 /* Reduce sidebar inner padding for more horizontal space */
 .md-sidebar--primary .md-sidebar__inner {
-  padding-left: 0.4rem;
+  padding-left: 0.2rem;
+  padding-right: 0.4rem;
 }
 
 /* Reduce nested nav indentation */
 .md-nav--primary .md-nav__item .md-nav__link {
-  padding-left: 0.4rem;
+  padding-left: 0.2rem;
 }
 
-/* Consistent vertical spacing for all primary nav items */
+/* Consistent vertical spacing and larger font for all primary nav items */
 .md-nav--primary .md-nav__link {
   margin-top: 0;
   padding-top: 0.3em;
   padding-bottom: 0.3em;
+  font-size: 0.85rem;
 }
 
 /* ============================================
@@ -121,17 +123,17 @@
 
 @media screen and (min-width: 60em) {
   .md-sidebar--primary {
-    width: 14rem;
+    width: 18rem;
   }
 }
 
 @media screen and (min-width: 76.25em) {
   .md-sidebar--primary {
-    width: 16rem;
+    width: 21rem;
   }
 
   .md-sidebar--primary ~ .md-content > .md-content__inner {
-    margin-left: 0.4rem;
+    margin-left: 0.1rem;
   }
 }
 
